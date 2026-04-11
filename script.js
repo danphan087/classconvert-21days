@@ -182,9 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Supabase Configuration
+const SUPABASE_URL = "https://rypaiacnnorwxjaywhcd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ThnqQjrR_ch32dsVyqlBwQ_WQmwv46q";
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // SePay Payment Automation Logic
 const SEPAY_CONFIG = {
-    apiKey: "0NMPWQXMRSLJATN8VYT1E6FDCYELRT72D5SOJZSXQLE69LKCP3JKBMQIHURIH9UW", // DÁN MÃ API TOKEN CỦA BẠN VÀO ĐÂY
+    apiKey: "0NMPWQXMRSLJATN8VYT1E6FDCYELRT72D5SOJZSXQLE69LKCP3JKBMQIHURIH9UW",
     accountNumber: "29947747",
     bank: "ACB",
     amount: 5000
@@ -193,14 +198,12 @@ const SEPAY_CONFIG = {
 let paymentMessage = "";
 
 function initPayment() {
-    // Tạo nội dung chuyển khoản ngẫu nhiên
     paymentMessage = "CC21D" + Math.floor(1000 + Math.random() * 9000);
     const msgElement = document.getElementById('sepay-message');
     const qrElement = document.getElementById('sepay-qr');
     
     if (msgElement) msgElement.innerText = paymentMessage;
     
-    // Tạo link QR VietQR
     if (qrElement) {
         qrElement.src = `https://qr.sepay.vn/img?acc=${SEPAY_CONFIG.accountNumber}&bank=${SEPAY_CONFIG.bank}&amount=${SEPAY_CONFIG.amount}&des=${paymentMessage}&template=compact`;
     }
@@ -209,13 +212,13 @@ function initPayment() {
         const isPaid = await checkPaymentStatus();
         if (isPaid) {
             clearInterval(checkInterval);
+            await handleSuccessfulPayment();
             showPaymentSuccess();
         }
     }, 5000);
 }
 
 async function checkPaymentStatus() {
-    if (SEPAY_CONFIG.apiKey === "YOUR_API_TOKEN_HERE") return false;
     try {
         const response = await fetch(`https://api.sepay.vn/user/transactions/list?account_number=${SEPAY_CONFIG.accountNumber}&limit=20`, {
             headers: {
@@ -233,6 +236,36 @@ async function checkPaymentStatus() {
         }
     } catch (e) { console.error(e); }
     return false;
+}
+
+async function handleSuccessfulPayment() {
+    // Tự động lưu khách hàng và đơn hàng vào Supabase khi thanh toán thành công
+    try {
+        // 1. Giả sử lấy tên từ chatbot hoặc mặc định
+        const customerName = "Khách hàng mới (" + paymentMessage + ")";
+        
+        // 2. Thêm vào bảng customers
+        const { data: customer, error: cError } = await _supabase
+            .from('customers')
+            .insert([{ name: customerName, phone: paymentMessage }])
+            .select();
+
+        if (customer) {
+            // 3. Tạo đơn hàng (Sản phẩm ID 1 mặc định)
+            await _supabase.from('orders').insert([{
+                customer_id: customer[0].id,
+                product_id: 1,
+                amount: 5000,
+                status: 'completed'
+            }]);
+            
+            // 4. Trừ kho sản phẩm 1
+            const { data: product } = await _supabase.from('products').select('stock_quantity').eq('id', 1).single();
+            if (product) {
+                await _supabase.from('products').update({ stock_quantity: product.stock_quantity - 1 }).eq('id', 1);
+            }
+        }
+    } catch (e) { console.error("Lỗi lưu DB:", e); }
 }
 
 function showPaymentSuccess() {

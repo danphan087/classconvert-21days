@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ClassConvert</title>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        body { font-family: 'Manrope', sans-serif; background-color: #f8fafc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { background-color: #6366f1; color: white; }
+    </style>
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#1E1B4B] text-white p-6 hidden md:block">
+            <h1 class="text-2xl font-extrabold mb-10 flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-400">admin_panel_settings</span> Admin
+            </h1>
+            <nav class="space-y-4">
+                <button onclick="switchTab('products')" class="tab-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all hover:bg-white/10 active" id="btn-products">
+                    <span class="material-symbols-outlined">inventory_2</span> Sản phẩm
+                </button>
+                <button onclick="switchTab('customers')" class="tab-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all hover:bg-white/10" id="btn-customers">
+                    <span class="material-symbols-outlined">group</span> Khách hàng
+                </button>
+                <button onclick="switchTab('orders')" class="tab-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all hover:bg-white/10" id="btn-orders">
+                    <span class="material-symbols-outlined">shopping_cart</span> Đơn hàng
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-8">
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 id="current-tab-title" class="text-3xl font-bold text-slate-900">Quản lý Sản phẩm</h2>
+                    <p class="text-slate-500">Dữ liệu thời gian thực từ Supabase</p>
+                </div>
+                <button onclick="openModal()" class="bg-[#6366f1] hover:bg-indigo-700 text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 shadow-lg transition-all">
+                    <span class="material-symbols-outlined">add</span> Thêm mới
+                </button>
+            </header>
+
+            <!-- Products Tab -->
+            <div id="products-tab" class="tab-content active bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="p-4 font-bold text-slate-600">ID</th>
+                            <th class="p-4 font-bold text-slate-600">Tên Sản phẩm</th>
+                            <th class="p-4 font-bold text-slate-600">Giá</th>
+                            <th class="p-4 font-bold text-slate-600">Tồn kho</th>
+                            <th class="p-4 font-bold text-slate-600 text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-list"></tbody>
+                </table>
+            </div>
+
+            <!-- Customers Tab -->
+            <div id="customers-tab" class="tab-content bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="p-4 font-bold text-slate-600">ID</th>
+                            <th class="p-4 font-bold text-slate-600">Họ tên</th>
+                            <th class="p-4 font-bold text-slate-600">Số điện thoại</th>
+                            <th class="p-4 font-bold text-slate-600 text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customers-list"></tbody>
+                </table>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders-tab" class="tab-content bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="p-4 font-bold text-slate-600">Mã ĐH</th>
+                            <th class="p-4 font-bold text-slate-600">Khách</th>
+                            <th class="p-4 font-bold text-slate-600">Sản phẩm</th>
+                            <th class="p-4 font-bold text-slate-600">Tổng tiền</th>
+                            <th class="p-4 font-bold text-slate-600 text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-list"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
+            <h3 id="modal-title" class="text-2xl font-bold mb-6">Thêm Sản phẩm</h3>
+            <form id="entry-form" class="space-y-4">
+                <input type="text" id="field1" placeholder="Tên sản phẩm..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none" required>
+                <input type="number" id="field2" placeholder="Giá..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none" required>
+                <input type="number" id="field3" placeholder="Số lượng kho..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none" required>
+                <div class="flex gap-4 pt-4">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-4 text-slate-500 font-bold">Hủy</button>
+                    <button type="submit" class="flex-1 py-4 bg-[#6366f1] text-white rounded-2xl font-bold shadow-lg">Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://rypaiacnnorwxjaywhcd.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_ThnqQjrR_ch32dsVyqlBwQ_WQmwv46q";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentTab = 'products';
+
+        async function loadData() {
+            if (currentTab === 'products') {
+                const { data } = await _supabase.from('products').select('*').order('id', { ascending: true });
+                renderProducts(data);
+            } else if (currentTab === 'customers') {
+                const { data } = await _supabase.from('customers').select('*');
+                renderCustomers(data);
+            } else if (currentTab === 'orders') {
+                const { data } = await _supabase.from('orders').select('*, customers(name), products(name)');
+                renderOrders(data);
+            }
+        }
+
+        function renderProducts(data) {
+            const html = data.map(p => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-4">${p.id}</td>
+                    <td class="p-4 font-bold">${p.name}</td>
+                    <td class="p-4 text-rose-600 font-bold">${parseInt(p.price).toLocaleString()}đ</td>
+                    <td class="p-4">${p.stock_quantity}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="deleteItem('products', ${p.id})" class="text-rose-600 p-2"><span class="material-symbols-outlined">delete</span></button>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('products-list').innerHTML = html;
+        }
+
+        function renderCustomers(data) {
+            const html = data.map(c => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-4">${c.id}</td>
+                    <td class="p-4 font-bold">${c.name}</td>
+                    <td class="p-4">${c.phone}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="deleteItem('customers', ${c.id})" class="text-rose-600 p-2"><span class="material-symbols-outlined">delete</span></button>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('customers-list').innerHTML = html;
+        }
+
+        function renderOrders(data) {
+            const html = data.map(o => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-4">#${o.id}</td>
+                    <td class="p-4">${o.customers?.name || '---'}</td>
+                    <td class="p-4">${o.products?.name || '---'}</td>
+                    <td class="p-4 font-bold text-indigo-600">${parseInt(o.amount).toLocaleString()}đ</td>
+                    <td class="p-4 text-right">
+                        <button onclick="deleteItem('orders', ${o.id})" class="text-rose-600 p-2"><span class="material-symbols-outlined">delete</span></button>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('orders-list').innerHTML = html;
+        }
+
+        async function deleteItem(table, id) {
+            if (confirm('Bạn có chắc muốn xóa không?')) {
+                await _supabase.from(table).delete().eq('id', id);
+                loadData();
+            }
+        }
+
+        document.getElementById('entry-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('field1').value;
+            const price = document.getElementById('field2').value;
+            const stock = document.getElementById('field3').value;
+
+            if (currentTab === 'products') {
+                await _supabase.from('products').insert([{ name, price, stock_quantity: stock }]);
+            }
+            closeModal();
+            loadData();
+        };
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'bg-white/10'));
+            
+            document.getElementById(tabId + '-tab').classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active', 'bg-white/10');
+            
+            const titles = { 'products': 'Quản lý Sản phẩm', 'customers': 'Danh sách Khách hàng', 'orders': 'Lịch sử Đơn hàng' };
+            document.getElementById('current-tab-title').innerText = titles[tabId];
+            loadData();
+        }
+
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        loadData();
+    </script>
+</body>
+</html>
