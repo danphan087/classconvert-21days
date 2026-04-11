@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // SePay Payment Automation Logic
 const SEPAY_CONFIG = {
-    apiKey: "YOUR_API_TOKEN_HERE", // DÁN MÃ API TOKEN CỦA BẠN VÀO ĐÂY
+    apiKey: "0NMPWQXMRSLJATN8VYT1E6FDCYELRT72D5SOJZSXQLE69LKCP3JKBMQIHURIH9UW", // DÁN MÃ API TOKEN CỦA BẠN VÀO ĐÂY
     accountNumber: "29947747",
     bank: "ACB",
     amount: 5000
