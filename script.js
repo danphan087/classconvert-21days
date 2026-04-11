@@ -218,16 +218,7 @@ function initPayment() {
     }, 5000);
 }
 
-let bypassAttempts = 0;
 async function checkPaymentStatus() {
-    bypassAttempts++;
-    
-    // Tự động Vượt rào thành công sau 15 giây (3 lần quét) để trải nghiệm Demo
-    if (bypassAttempts >= 3) {
-        console.log("Kích hoạt chế độ Bypass Thành Công để trình diễn...");
-        return true;
-    }
-
     try {
         const url = `/api/check-payment?accountNumber=${SEPAY_CONFIG.accountNumber}&apiKey=${SEPAY_CONFIG.apiKey}&paymentMessage=${paymentMessage}`;
         const response = await fetch(url);
@@ -237,7 +228,7 @@ async function checkPaymentStatus() {
             return true;
         }
     } catch (e) { 
-        console.error("Lỗi trạm trung chuyển (Sẽ tự động Bypass sau 15s):", e); 
+        console.error("Lỗi trạm trung chuyển (Vercel/CORS API):", e); 
     }
     return false;
 }
@@ -259,7 +250,7 @@ async function handleSuccessfulPayment() {
             await _supabase.from('orders').insert([{
                 customer_id: customer[0].id,
                 product_id: 1,
-                amount: 5000,
+                amount: 1000,
                 status: 'completed'
             }]);
             
