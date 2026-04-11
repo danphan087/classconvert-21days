@@ -192,7 +192,7 @@ const SEPAY_CONFIG = {
     apiKey: "0NMPWQXMRSLJATN8VYT1E6FDCYELRT72D5SOJZSXQLE69LKCP3JKBMQIHURIH9UW",
     accountNumber: "29947747",
     bank: "ACB",
-    amount: 5000
+    amount: 99000
 };
 
 let paymentMessage = "";
