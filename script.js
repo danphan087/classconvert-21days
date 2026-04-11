@@ -220,21 +220,38 @@ function initPayment() {
 
 async function checkPaymentStatus() {
     try {
+        console.log("Đang kiểm tra giao dịch với mã:", paymentMessage);
         const response = await fetch(`https://api.sepay.vn/user/transactions/list?account_number=${SEPAY_CONFIG.accountNumber}&limit=20`, {
             headers: {
                 'Authorization': `Bearer ${SEPAY_CONFIG.apiKey}`,
                 'Content-Type': 'application/json'
             }
         });
-        const data = await response.json();
-        if (data.transactions) {
-            const found = data.transactions.find(t => 
-                t.transaction_content.includes(paymentMessage) && 
-                parseFloat(t.amount_in) >= SEPAY_CONFIG.amount
-            );
-            return !!found;
+        
+        if (!response.ok) {
+            console.error("Lỗi API SePay:", response.status);
+            return false;
         }
-    } catch (e) { console.error(e); }
+
+        const data = await response.json();
+        console.log("Dữ liệu nhận được từ SePay:", data);
+
+        if (data.transactions && data.transactions.length > 0) {
+            // Tìm giao dịch: Cho phép nội dung chứa mã (không phân biệt hoa thường)
+            const found = data.transactions.find(t => {
+                const content = (t.transaction_content || "").toUpperCase();
+                return content.includes(paymentMessage.toUpperCase()) && 
+                       parseFloat(t.amount_in || 0) >= SEPAY_CONFIG.amount;
+            });
+            
+            if (found) {
+                console.log("Tìm thấy giao dịch khớp!");
+                return true;
+            }
+        }
+    } catch (e) { 
+        console.error("Lỗi kết nối mạng hoặc CORS:", e); 
+    }
     return false;
 }
 
