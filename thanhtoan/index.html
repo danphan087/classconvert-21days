@@ -28,11 +28,22 @@
     <div id="sepay-checkout" class="bg-white p-8 rounded-[40px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 max-w-[450px] w-full text-center">
         <!-- Customer Info Form -->
         <div id="customer-form-ui">
-            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <span class="material-symbols-outlined text-4xl">person_add</span>
+            <!-- Product Summary Card -->
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 mb-6 flex gap-4 items-center text-left shadow-sm">
+                <div class="w-16 h-16 bg-white rounded-xl shadow border border-indigo-200 flex items-center justify-center text-indigo-500 overflow-hidden shrink-0">
+                    <span class="material-symbols-outlined">menu_book</span>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-800 leading-tight text-sm">Tuyệt chiêu Tuyển sinh Tự động (14-Day Checklist)</h3>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-xs line-through text-slate-400">299.000đ</span>
+                        <span class="font-bold text-rose-600 text-lg">5.000đ</span>
+                    </div>
+                </div>
             </div>
-            <h2 class="text-2xl font-black text-slate-900 mb-2">Thông tin nhận Ebook</h2>
-            <p class="text-slate-500 mb-8 text-sm">Vui lòng điền thông tin để hệ thống tạo đơn hàng và gửi tài liệu cho bạn.</p>
+
+            <h2 class="text-xl text-left font-black text-slate-900 mb-2">Thông tin Liên hệ</h2>
+            <p class="text-slate-500 text-left mb-6 text-sm">Hệ thống sẽ tạo đơn và tự động gửi tài liệu qua Email/Zalo của bạn.</p>
 
             <form id="checkout-form" class="space-y-4 text-left">
                 <div>
@@ -100,7 +111,7 @@
     </div>
 
     <!-- Re-use the same script or a lightweight version -->
-    <script src="../script.js?v=bypass_cache_6"></script>
+    <script src="../script.js?v=bypass_cache_7"></script>
     <script>
         // Override config for this page if needed (e.g. amount 5k)
         if (typeof SEPAY_CONFIG !== 'undefined') {

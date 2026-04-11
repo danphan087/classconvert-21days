@@ -247,17 +247,22 @@ async function handleSuccessfulPayment() {
     try {
         let customerName = "Khách hàng (" + paymentMessage + ")";
         let customerPhone = paymentMessage;
+        let customerEmail = "";
         
         // Sử dụng thông tin từ form nếu có
         if (typeof currentCustomerInfo !== 'undefined' && currentCustomerInfo) {
             customerName = currentCustomerInfo.name;
             customerPhone = currentCustomerInfo.phone;
+            customerEmail = currentCustomerInfo.email || "";
         }
+
+        let customerData = { name: customerName, phone: customerPhone };
+        if (customerEmail) customerData.email = customerEmail;
         
         // 2. Thêm vào bảng customers
         const { data: customer, error: cError } = await _supabase
             .from('customers')
-            .insert([{ name: customerName, phone: customerPhone }])
+            .insert([customerData])
             .select();
 
         if (customer) {

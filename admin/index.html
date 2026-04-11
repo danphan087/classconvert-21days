@@ -72,6 +72,7 @@
                             <th class="p-4 font-bold text-slate-600">ID</th>
                             <th class="p-4 font-bold text-slate-600">Họ tên</th>
                             <th class="p-4 font-bold text-slate-600">Số điện thoại</th>
+                            <th class="p-4 font-bold text-slate-600">Email</th>
                             <th class="p-4 font-bold text-slate-600 text-right">Thao tác</th>
                         </tr>
                     </thead>
@@ -154,6 +155,7 @@
                     <td class="p-4">${c.id}</td>
                     <td class="p-4 font-bold">${c.name}</td>
                     <td class="p-4">${c.phone}</td>
+                    <td class="p-4 text-slate-500">${c.email || '---'}</td>
                     <td class="p-4 text-right">
                         <button onclick="deleteItem('customers', ${c.id})" class="text-rose-600 p-2"><span class="material-symbols-outlined">delete</span></button>
                     </td>
