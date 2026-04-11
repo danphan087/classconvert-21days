@@ -209,6 +209,7 @@ function initPayment() {
     }
 
     const checkInterval = setInterval(async () => {
+        paymentCheckInterval = checkInterval;
         const isPaid = await checkPaymentStatus();
         if (isPaid) {
             clearInterval(checkInterval);
@@ -247,13 +248,19 @@ async function checkPaymentStatus() {
 async function handleSuccessfulPayment() {
     // Tự động lưu khách hàng và đơn hàng vào Supabase khi thanh toán thành công
     try {
-        // 1. Giả sử lấy tên từ chatbot hoặc mặc định
-        const customerName = "Khách hàng mới (" + paymentMessage + ")";
+        let customerName = "Khách hàng (" + paymentMessage + ")";
+        let customerPhone = paymentMessage;
+        
+        // Sử dụng thông tin từ form nếu có
+        if (typeof currentCustomerInfo !== 'undefined' && currentCustomerInfo) {
+            customerName = currentCustomerInfo.name;
+            customerPhone = currentCustomerInfo.phone;
+        }
         
         // 2. Thêm vào bảng customers
         const { data: customer, error: cError } = await _supabase
             .from('customers')
-            .insert([{ name: customerName, phone: paymentMessage }])
+            .insert([{ name: customerName, phone: customerPhone }])
             .select();
 
         if (customer) {
@@ -281,8 +288,40 @@ function showPaymentSuccess() {
     if (success) success.classList.remove('hidden');
 }
 
+let currentCustomerInfo = null;
+let paymentCheckInterval = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('sepay-checkout')) {
+    const checkoutForm = document.getElementById('checkout-form');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            currentCustomerInfo = {
+                name: document.getElementById('customer-name').value,
+                phone: document.getElementById('customer-phone').value,
+                email: document.getElementById('customer-email').value
+            };
+
+            document.getElementById('customer-form-ui').classList.add('hidden');
+            document.getElementById('payment-ui').classList.remove('hidden');
+            
+            initPayment();
+        });
+
+        // Nút quay lại
+        const backBtn = document.getElementById('back-to-form');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                document.getElementById('payment-ui').classList.add('hidden');
+                document.getElementById('customer-form-ui').classList.remove('hidden');
+                if (paymentCheckInterval) {
+                   clearInterval(paymentCheckInterval);
+                }
+            });
+        }
+    } else if (document.getElementById('sepay-checkout')) {
+        // Dự phòng nếu không có form (trang cũ)
         initPayment();
     }
 });
