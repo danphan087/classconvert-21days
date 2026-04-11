@@ -1,0 +1,9 @@
+{
+  "name": "classconvert-21days",
+  "version": "1.0.0",
+  "description": "Hệ thống tự động ClassConvert",
+  "type": "module",
+  "engines": {
+    "node": "18.x"
+  }
+}
