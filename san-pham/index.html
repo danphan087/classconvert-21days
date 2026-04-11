@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm số - ClassConvert</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Manrope', sans-serif; background: #fff; color: #1e293b; }
+        @media print {
+            .no-print { display: none; }
+            body { padding: 0; margin: 0; }
+            .page-break { page-break-before: always; }
+        }
+        .gradient-bg { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+    </style>
+</head>
+<body class="p-8 md:p-16">
+    <!-- Nút hướng dẫn (Không in) -->
+    <div class="no-print mb-10 p-5 bg-indigo-50 border border-indigo-100 rounded-2xl flex justify-between items-center shadow-sm">
+        <div>
+            <h4 class="font-bold text-indigo-900">Hướng dẫn tạo PDF:</h4>
+            <p class="text-sm text-indigo-700">Nhấn <b>Ctrl + P</b> và chọn <b>"Lưu thành PDF"</b> để có bản in đẹp nhất.</p>
+        </div>
+        <button onclick="window.print()" class="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:bg-indigo-700 transition-all">Tạo PDF Ngay</button>
+    </div>
+
+    <!-- Trang Bìa -->
+    <div class="h-[900px] flex flex-col items-center justify-center text-center border-[20px] border-indigo-50 rounded-3xl gradient-bg text-white relative overflow-hidden">
+        <div class="mb-10 opacity-20 text-[200px] absolute -top-20 -left-20 font-black">14</div>
+        <div class="z-10 px-10">
+            <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight uppercase">Checklist 14 Ngày</h1>
+            <h2 class="text-2xl md:text-3xl font-medium opacity-90 mb-12 tracking-widest">XÂY DỰNG HỆ THỐNG TUYỂN SINH TỰ ĐỘNG</h2>
+            <div class="w-24 h-2 bg-white mx-auto rounded-full mb-12"></div>
+            <p class="text-xl font-bold">ClassConvert | Phan Long</p>
+        </div>
+        <div class="absolute bottom-10 text-sm opacity-60">© 2026 ClassConvert. Chúc Thầy cô tuyển sinh rực rỡ!</div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Trang Nội dung -->
+    <div class="max-w-4xl mx-auto py-20">
+        <div class="flex items-center gap-4 mb-10">
+            <div class="w-12 h-1 bg-indigo-600"></div>
+            <p class="uppercase font-bold tracking-widest text-indigo-600">Lời mở đầu</p>
+        </div>
+        <p class="text-xl leading-relaxed italic text-slate-600 mb-16">
+            "Chào Thầy cô, tôi hiểu việc phải vất vả trực tin nhắn 24/7 thực sự mệt mỏi. Bản lộ trình này là kết tinh thực chiến nhất giúp thầy cô thoát khỏi bẫy thời gian để tập trung vào chuyên môn. Hãy đi đúng lộ trình này, kết quả sẽ khiến thầy cô bất ngờ."
+        </p>
+
+        <div class="grid gap-12">
+            <!-- Tuần 1 -->
+            <div>
+                <h3 class="text-3xl font-black text-indigo-900 mb-8 border-b-4 border-indigo-100 pb-2 inline-block">Tuần 1: Nền móng & Chiến lược</h3>
+                <div class="space-y-8">
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">01</div>
+                        <div><h4 class="text-xl font-bold mb-1">Xác định khách hàng mục tiêu</h4><p class="text-slate-600">Hãy chọn ra một nhóm học viên cụ thể mà thầy cô có thể giúp họ tốt nhất. Đừng dạy cho tất cả mọi người.</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">02</div>
+                        <div><h4 class="text-xl font-bold mb-1">Lời chào hàng "Không thể chối từ"</h4><p class="text-slate-600">Đóng gói giá trị của mình thành một giải pháp cụ thể kèm theo một cam kết mạnh mẽ.</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">03</div>
+                        <div><h4 class="text-xl font-bold mb-1">Thiết lập "Bộ não AI"</h4><p class="text-slate-600">Liệt kê 10 câu hỏi kinh điển nhất của phụ huynh và viết câu trả lời theo đúng giọng điệu của thầy cô.</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">04</div>
+                        <div><h4 class="text-xl font-bold mb-1">Chatbot "Lễ tân chuyên nghiệp"</h4><p class="text-slate-600">Cài đặt kịch bản tư vấn tự động để khách nhắn tin là có phản hồi ngay lập tức, bất kể ngày đêm.</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">05</div>
+                        <div><h4 class="text-xl font-bold mb-1">Xây dựng phễu nội dung</h4><p class="text-slate-600">Chuẩn bị 3 bài viết: Chia sẻ giá trị - Câu chuyện thành công - Thông báo đăng ký.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-break"></div>
+
+            <!-- Tuần 2 -->
+            <div>
+                <h3 class="text-3xl font-black text-indigo-900 mb-8 border-b-4 border-indigo-100 pb-2 inline-block">Tuần 2: Lắp ráp & Cất cánh</h3>
+                <div class="space-y-8">
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">08</div>
+                        <div><h4 class="text-xl font-bold mb-1">Landing Page - Cửa hàng Online</h4><p class="text-slate-600">Tối ưu trang đích tập trung vào đúng 1 nút bấm: "Mua ngay" hoặc "Đặt lịch tư vấn".</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">09</div>
+                        <div><h4 class="text-xl font-bold mb-1">Kết nối Thanh toán SePay</h4><p class="text-slate-600">Tự động hóa dòng tiền đổ về ngân hàng. Khách quét mã xong là hệ thống tự nhận diện.</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">10</div>
+                        <div><h4 class="text-xl font-bold mb-1">Hệ thống CRM Quản lý học viên</h4><p class="text-slate-600">Vứt bỏ sổ tay. Mọi dữ liệu về khách hàng và đơn hàng phải nằm trong bảng Admin Panel.</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">12</div>
+                        <div><h4 class="text-xl font-bold mb-1">Test "Real-Time" chuẩn 5 sao</h4><p class="text-slate-600">Tự đóng vai khách hàng và chuyển 1.000đ để đảm bảo mọi "bánh răng" đều vận hành mượt mà.</p></div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="text-4xl font-black text-indigo-200">14</div>
+                        <div><h4 class="text-xl font-bold mb-1">Vận hành & Tối ưu hóa</h4><p class="text-slate-600">Lắng nghe phản hồi từ những khách hàng đầu tiên để tinh chỉnh "Cỗ máy" ngày càng thông minh.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chữ ký -->
+        <div class="mt-32 text-center p-10 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+            <p class="text-slate-500 mb-4 italic">Bắt đầu hành trình của thầy cô ngay hôm nay tại:</p>
+            <p class="text-2xl font-black text-indigo-600">ALPHA.CLASSCONVERT.VN</p>
+        </div>
+    </div>
+</body>
+</html>
