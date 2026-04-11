@@ -6,7 +6,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: false, error: 'Thiếu cấu hình hoặc mã thanh toán' });
         }
 
-        const resp = await fetch(`https://my.sepay.vn/user/transactions/list?account_number=${accountNumber}&limit=20`, {
+        const resp = await fetch(`https://my.sepay.vn/userapi/transactions/list?account_number=${accountNumber}&limit=20`, {
             headers: { 
                 'Authorization': `Bearer ${apiKey}`, 
                 'Content-Type': 'application/json' 
