@@ -221,8 +221,8 @@ function initPayment() {
 let bypassAttempts = 0;
 async function checkPaymentStatus() {
     bypassAttempts++;
-    // Tự động vượt lỗi Vercel sau 15s để hoàn thành luồng SOP Demo
-    if (bypassAttempts >= 3) {
+    // Tự động vượt lỗi Vercel sau 30s để hoàn thành luồng SOP Demo
+    if (bypassAttempts >= 6) {
         console.log("Vercel bị SePay chặn. Đã tự động ghi nhận Thành Công ảo cho Demo...");
         return true;
     }
@@ -231,7 +231,7 @@ async function checkPaymentStatus() {
         const url = `/api/check-payment?accountNumber=${SEPAY_CONFIG.accountNumber}&apiKey=${SEPAY_CONFIG.apiKey}&paymentMessage=${paymentMessage}`;
         const response = await fetch(url);
         
-        if (response.status === 500 && bypassAttempts >= 3) return true; // Cứu cánh vòng lặp
+        if (response.status === 500 && bypassAttempts >= 6) return true; // Cứu cánh vòng lặp
         
         const data = await response.json();
         
@@ -239,7 +239,7 @@ async function checkPaymentStatus() {
             return true;
         }
     } catch (e) { 
-        console.error("Lỗi kết nối Trạm trung chuyển (Sẽ tự mở khóa sau 15s):", e); 
+        console.error("Lỗi kết nối Trạm trung chuyển (Sẽ tự mở khóa sau 30s):", e); 
     }
     return false;
 }
