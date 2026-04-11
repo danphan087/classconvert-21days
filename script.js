@@ -192,7 +192,7 @@ const SEPAY_CONFIG = {
     apiKey: "0NMPWQXMRSLJATN8VYT1E6FDCYELRT72D5SOJZSXQLE69LKCP3JKBMQIHURIH9UW",
     accountNumber: "29947747",
     bank: "ACB",
-    amount: 1000
+    amount: 5000
 };
 
 let paymentMessage = "";
@@ -250,7 +250,7 @@ async function handleSuccessfulPayment() {
             await _supabase.from('orders').insert([{
                 customer_id: customer[0].id,
                 product_id: 1,
-                amount: 1000,
+                amount: 5000,
                 status: 'completed'
             }]);
             
