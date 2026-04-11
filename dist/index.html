@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassConvert - Cỗ Máy Tuyển Sinh Tự Động</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&amp;display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>html { scroll-behavior: smooth; }
+
+body { 
+    background-color: #F5F6FD; 
+    background-image: linear-gradient(to right, #EEEFFD 1px, transparent 1px),
+                      linear-gradient(to bottom, #EEEFFD 1px, transparent 1px);
+    background-size: 40px 40px;
+    color: #1E293B; 
+    font-family: 'Manrope', sans-serif; 
+    overflow-x: hidden; 
+}
+
+img { height: 100% !important; }
+.material-symbols-outlined { vertical-align: middle; }
+
+@media (max-width: 767px) {
+    .hide-on-mobile { display: none !important; }
+}
+
+@media (min-width: 768px) {
+    .path-animate {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw 2s ease-in-out forwards;
+    }
+    .path-animate-delay {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw 2.2s ease-in-out forwards 0.2s;
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Chatbot Custom Styles */
+#chat-window.active {
+    display: flex !important;
+    animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    from { transform: scale(0.95) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.bot-msg {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 0 16px 16px 16px;
+    padding: 12px 16px;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1E293B;
+}
+
+.user-msg {
+    background: #6366F1;
+    color: white;
+    border-radius: 16px 16px 0 16px;
+    padding: 12px 16px;
+    align-self: flex-end;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.faq-btn {
+    font-size: 12px;
+    padding: 8px 14px;
+    background: #F1F5F9;
+    color: #475569;
+    border-radius: 99px;
+    border: 1px solid #E2E8F0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.faq-btn:hover {
+    background: #EEF2FF;
+    color: #6366F1;
+    border-color: #6366F1;
+}
+</style>
+</head>
+<body>
+    <div class="fixed inset-0 pointer-events-none hidden md:block"></div>
+    
+    <nav class="border-b border-slate-200 bg-white md:bg-white/80 md:backdrop-blur-md fixed top-0 left-0 w-full z-50 shadow-sm">
+        <div class="w-full max-w-[1200px] mx-auto px-4 h-[70px] md:h-20 flex items-center justify-between relative">
+            <div class="flex items-center gap-2 h-full shrink-0 relative z-10">
+                <div class="h-8 md:h-10 flex">
+                    <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/logo-classconvert-20250519084330-b4vgc.png" alt="Logo" class="w-auto object-contain" width="160" height="40" referrerpolicy="no-referrer">
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center justify-center gap-8 text-slate-500 text-[15px] font-medium absolute left-1/2 -translate-x-1/2 w-max">
+                <a href="#giai-phap" class="hover:text-primary transition-colors">Giải Pháp</a>
+                <a href="#du-an" class="hover:text-primary transition-colors">Dự Án</a>
+                <a href="#cau-hoi" class="hover:text-primary transition-colors">Câu Hỏi</a>
+            </div>
+
+            <a href="https://tidycal.com/phanlong/classconvert" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 md:gap-2 px-5 py-2.5 md:px-6 md:py-2.5 rounded-full bg-gradient-to-r from-primary to-indigo-500 !text-white text-[14px] md:text-[15px] font-semibold hover:opacity-90 transition-opacity md:animate-glow shrink-0 relative z-10 shadow-[0_10px_20px_-10px_rgba(99,102,241,0.5)]">
+                <span class="!text-white">Đặt Lịch Tham Vấn</span>
+                <span class="material-symbols-outlined text-[12px] md:text-sm !text-white">arrow_forward</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="pt-[70px] md:pt-20 pb-20 relative z-10">
+        <section class="pt-[56px] pb-8 md:pt-[80px] md:pb-12 px-4 text-center relative">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-200 opacity-40 blur-[100px] rounded-full pointer-events-none hidden md:block"></div>
+
+            <div class="relative z-10 max-w-[1200px] mx-auto flex flex-col items-center">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-100 bg-indigo-50 mb-8 shadow-sm">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-primary text-sm">bolt</span>
+                    </div>
+                    <span class="text-[14px] font-normal text-primary tracking-wide">
+                        Dành cho giáo viên dạy online <br class="block md:hidden"> muốn ngừng mở lớp theo kiểu may rủi
+                    </span>
+                </div>
+
+                <h1 class="font-['Inter'] text-[32px] md:text-[51px] font-extrabold leading-[1.4] tracking-[1px] mb-6 max-w-full md:uppercase text-[#312C7A]">
+                    Sở hữu cỗ máy 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6465F1] to-[#9134EA] py-2">tuyển sinh tự động</span>
+                    <br class="hidden md:block">
+                    tạo dòng học viên đều đặn và lấp đầy
+                    <br class="hidden md:block">
+                    <span class="md:hidden">lớp học 24/7</span>
+                    <span class="hidden md:inline">lớp học mỗi kỳ khai giảng</span>
+                </h1>
+
+                <p class="text-[16px] md:text-[18px] text-slate-600 max-w-[950px] mb-10 leading-relaxed font-medium">
+                    Bạn không cần đăng nhiều content hơn, không cần tư vấn khách rác, không cần học thêm công cụ phức tạp.
+                    <br class="hidden md:block">
+                    Tôi xây dựng hệ thống cho bạn trong 14 ngày - Bạn chỉ cần tập trung giảng dạy và phát triển business.
+                </p>
+
+                <div class="flex flex-col items-center gap-4">
+                    <a href="https://tidycal.com/phanlong/classconvert" target="_blank" rel="noopener noreferrer" class="flex items-center md:gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-primary to-indigo-500 !text-white text-[15px] md:text-[18px] font-bold hover:scale-105 transition-transform shadow-[0_15px_30px_-10px_rgba(99,102,241,0.4)]">
+                        <span class="!text-white">ĐẶT LỊCH THAM VẤN 15 PHÚT</span>
+                        <span class="material-symbols-outlined hide-on-mobile !text-white">arrow_forward</span>
+                    </a>
+                    <span class="text-[14px] text-slate-500 font-medium">Để xem cách cỗ máy hoạt động</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-4 mb-20 md:mb-24 relative">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[80%] bg-indigo-100 opacity-40 blur-[100px] rounded-full -z-10 pointer-events-none hidden md:block"></div>
+
+            <div class="max-w-[1200px] mx-auto bg-white/90 backdrop-blur-xl rounded-3xl border border-white p-6 md:p-8 shadow-[0_25px_60px_-15px_rgba(99,102,241,0.2)] relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none rounded-3xl hidden md:block">
+                   <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-indigo-50 opacity-[0.8] blur-[80px] rounded-full"></div>
+                   <div class="absolute bottom-[10%] -right-[10%] w-[40%] h-[60%] bg-blue-50 opacity-[0.8] blur-[80px] rounded-full"></div>
+                </div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="flex gap-2.5">
+                            <div class="w-3.5 h-3.5 rounded-full bg-slate-200"></div>
+                            <div class="w-3.5 h-3.5 rounded-full bg-slate-300"></div>
+                            <div class="w-3.5 h-3.5 rounded-full bg-slate-400"></div>
+                        </div>
+                        <div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+                        <div class="px-5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[11px] md:text-[13px] font-semibold text-primary shadow-sm">
+                            <span class="md:hidden">DỮ LIỆU TUYỂN SINH</span>
+                            <span class="hidden md:inline">DỮ LIỆU TUYỂN SINH / LIVE</span>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center gap-3 w-full md:w-auto justify-end">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm hover:border-indigo-200 transition-colors cursor-pointer">
+                            <span class="material-symbols-outlined text-slate-400 text-lg">search</span>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100 shadow-sm transition-colors cursor-pointer">
+                            <span class="material-symbols-outlined text-primary text-lg">person</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 mb-4 md:mb-6">
+                    <div class="bg-white p-4 md:p-6 rounded-2xl border border-slate-100 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] hover:border-indigo-200 transition-all group/card">
+                        <div class="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 md:mb-3">LEADS MỚI</div>
+                        <div class="flex items-end gap-2 md:gap-3">
+                            <div class="text-[24px] md:text-[36px] font-bold leading-none text-[#1E1B4B] transition-all">208</div>
+                            <div class="text-[11px] md:text-[13px] font-bold mb-1 md:mb-1.5 text-emerald-500">+12.4%</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 md:p-6 rounded-2xl border border-slate-100 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] hover:border-indigo-200 transition-all group/card">
+                        <div class="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 md:mb-3">HỌC SINH MỚI</div>
+                        <div class="flex items-end gap-2 md:gap-3">
+                            <div class="text-[24px] md:text-[36px] font-bold leading-none text-[#1E1B4B] transition-all">25</div>
+                            <div class="text-[11px] md:text-[13px] font-bold mb-1 md:mb-1.5 text-emerald-500">+8.1%</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 md:p-6 rounded-2xl border border-slate-100 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] hover:border-indigo-200 transition-all group/card">
+                        <div class="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 md:mb-3">TỈ LỆ CHUYỂN ĐỔI</div>
+                        <div class="flex items-end gap-2 md:gap-3">
+                            <div class="text-[24px] md:text-[36px] font-bold leading-none text-[#1E1B4B] transition-all">12%</div>
+                            <div class="text-[11px] md:text-[13px] font-bold mb-1 md:mb-1.5 text-primary">Ổn Định</div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-primary to-indigo-600 p-4 md:p-6 rounded-2xl border border-indigo-700 transition-all group/card shadow-[0_15px_30px_-10px_rgba(99,102,241,0.5)]">
+                        <div class="text-[10px] md:text-[11px] font-bold text-indigo-100 uppercase tracking-wider mb-2 md:mb-3"><span class="md:hidden">D.THU DỰ TÍNH</span><span class="hidden md:inline">DOANH THU DỰ TÍNH</span></div>
+                        <div class="flex items-end gap-2 md:gap-3">
+                            <div class="text-[24px] md:text-[36px] font-bold leading-none !text-white transition-all">212M</div>
+                            <div class="text-[11px] md:text-[13px] font-bold mb-1 md:mb-1.5 text-emerald-300">+18.5%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="md:col-span-2 bg-white p-4 md:p-6 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="flex items-center justify-between mb-6 md:mb-10">
+                            <h3 class="text-[14px] md:text-[15px] font-bold text-[#1E1B4B]">
+                                <span class="md:hidden">Tăng Trưởng</span>
+                                <span class="hidden md:inline">Hiệu Suất Tăng Trưởng</span>
+                            </h3>
+                            <div class="flex gap-3 md:gap-5 text-[10px] md:text-[12px] font-semibold">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-primary shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+                                    <span class="text-slate-500">Leads</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-[#A855F7] shadow-[0_0_8px_rgba(168,85,247,0.5)]"></div>
+                                    <span class="text-slate-500">
+                                        <span class="md:hidden">Rev</span>
+                                        <span class="hidden md:inline">Doanh Thu</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-[150px] md:h-[220px] w-full relative flex items-end px-2 opacity-80">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1000 220" preserveAspectRatio="none">
+                                <path d="M0,170 C150,160 200,200 300,190 C450,175 500,100 600,110 C750,125 800,140 900,80 C950,50 980,30 1000,30" fill="none" stroke="#6366F1" stroke-width="4" stroke-linecap="round" class="drop-shadow-md path-animate"></path>
+                                <path d="M0,190 C150,190 250,140 400,150 C550,160 600,180 750,120 C850,80 950,80 1000,90" fill="none" stroke="#A855F7" stroke-width="4" stroke-linecap="round" class="drop-shadow-md path-animate-delay"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="hidden md:flex bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex-col">
+                        <h3 class="text-[15px] font-bold mb-10 text-[#1E1B4B]">Kênh Phân Phối</h3>
+                        <div class="h-[220px] flex items-end justify-between gap-3 px-2">
+                            <div class="w-full bg-gradient-to-t from-primary to-[#A855F7] h-[40%] rounded-t-lg opacity-80 shadow-[0_5px_15px_rgba(99,102,241,0.2)]"></div>
+                            <div class="w-full bg-gradient-to-t from-[#6162F0] to-[#8081f5] h-[70%] rounded-t-lg shadow-[0_5px_15px_rgba(97,98,240,0.3)]"></div>
+                            <div class="w-full bg-gradient-to-t from-primary to-[#A855F7] h-[55%] rounded-t-lg opacity-80 shadow-[0_5px_15px_rgba(99,102,241,0.2)]"></div>
+                            <div class="w-full bg-gradient-to-t from-[#6162F0] to-[#8081f5] h-[90%] rounded-t-lg shadow-[0_5px_15px_rgba(97,98,240,0.3)]"></div>
+                            <div class="w-full bg-gradient-to-t from-primary to-[#A855F7] h-[30%] rounded-t-lg opacity-80 shadow-[0_5px_15px_rgba(99,102,241,0.2)]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-4 pb-12 md:pb-16 relative">
+            <div class="max-w-[1000px] mx-auto">
+                <div class="text-center mb-10">
+                    <div class="inline-block px-4 py-1.5 rounded-full border border-slate-200 bg-white mb-6 shadow-sm">
+                        <span class="text-[14px] font-normal text-slate-500 tracking-wide">Bạn có thấy mình trong tình trạng này?</span>
+                    </div>
+                    <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                        Mỗi lần mở lớp, bạn lại bước vào một
+                        <br class="hidden md:block">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6465F1] to-[#9134EA]">vòng lặp</span> không mấy dễ chịu
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-[#6465F1] to-[#9134EA] mx-auto mt-6 rounded-full"></div>
+                </div>
+
+                <div class="relative z-10 bg-white/80 backdrop-blur-md rounded-3xl border border-white p-8 md:p-12 shadow-[0_20px_60px_-15px_rgba(99,102,241,0.15)] max-w-[830px] mx-auto">
+                    <div class="mb-12">
+                        <h3 class="text-[16px] md:text-[18px] font-bold mb-6 text-[#1E1B4B]">Những việc bạn thường làm mỗi khi chuẩn bị mở lớp:</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-[#8E37EA] shrink-0 shadow-[0_0_10px_rgba(142,55,234,0.8)]"></div>
+                                <span>Bạn lên lịch đăng bài dày đặc hơn</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-[#8E37EA] shrink-0 shadow-[0_0_10px_rgba(142,55,234,0.8)]"></div>
+                                <span>Bạn chăm chỉ livestream và làm nhiều webinar hơn</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-[#8E37EA] shrink-0 shadow-[0_0_10px_rgba(142,55,234,0.8)]"></div>
+                                <span>Bạn kêu gọi học sinh đăng ký nhiều hơn</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-[#8E37EA] shrink-0 shadow-[0_0_10px_rgba(142,55,234,0.8)]"></div>
+                                <span>Bạn trả lời tin nhắn tư vấn nhiều hơn</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-[#8E37EA] shrink-0 shadow-[0_0_10px_rgba(142,55,234,0.8)]"></div>
+                                <span>Và bạn hy vọng: lần này sẽ đủ học viên.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-12">
+                        <h3 class="text-[16px] md:text-[18px] font-bold mb-6 text-[#1E1B4B]">Nhưng thứ bạn nhận được thường là:</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <span class="material-symbols-outlined text-rose-500 shrink-0">cancel</span>
+                                <span>Người xin tài liệu miễn phí</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <span class="material-symbols-outlined text-rose-500 shrink-0">cancel</span>
+                                <span>Người liên hệ hỏi hoặc đăng ký lớp học lác đác.</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <span class="material-symbols-outlined text-rose-500 shrink-0">cancel</span>
+                                <span>Nếu có nhiều người quan tâm thì chỉ ít người chốt</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <span class="material-symbols-outlined text-rose-500 shrink-0">cancel</span>
+                                <span>Khách mới không tin chất lượng, chỉ so sánh học phí và mặc cả</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <span class="material-symbols-outlined text-rose-500 shrink-0">cancel</span>
+                                <span>Cuối cùng vẫn phải trông vào học viên cũ giới thiệu</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-indigo-50/50 p-6 rounded-xl border-solid border-l-[4px] border-primary mb-12">
+                        <h3 class="text-[16px] md:text-[18px] font-bold mb-2 text-[#1E1B4B]">Trong khi bạn biết rõ:</h3>
+                        <p class="text-[16px] md:text-[18px] text-slate-600">
+                            Bạn dạy tốt, lớp học có phương pháp hiệu quả, học viên có kết quả tốt.
+                        </p>
+                    </div>
+
+                    <div class="mb-12">
+                        <h3 class="text-[16px] md:text-[18px] font-bold mb-6 text-[#1E1B4B]">Nếu vẫn làm theo cách cũ, cái bạn mất ở đây không chỉ là thời gian:</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"></div>
+                                <span>Bạn không dự báo được doanh thu.</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"></div>
+                                <span>Bạn không biết tháng sau có bao nhiêu học viên.</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"></div>
+                                <span>Bạn không dám tăng giá, không dám mở lớp mới.</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                <div class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"></div>
+                                <span>Bạn không dám thuê trợ giảng, không dám mở rộng quy mô lớp học.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-8 border-t border-slate-200 text-center">
+                        <p class="text-[16px] md:text-[18px] text-[#1E1B4B] italic font-semibold leading-relaxed">
+                            "Bạn gồng gánh mỗi ngày nuôi sống sự nghiệp dạy học để đạt được tự do,
+                            <br class="hidden md:block">
+                            nhưng nay nó lại chính là nơi giam cầm bạn."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-4 py-12 md:py-16">
+            <div class="max-w-[1036px] mx-auto">
+                <div class="text-center mb-10">
+                    <div class="inline-block px-4 py-1.5 rounded-full border border-indigo-100 bg-white shadow-sm mb-6">
+                        <span class="text-[14px] font-normal text-primary tracking-wide">Đây là chỗ nhiều giáo viên mắc kẹt</span>
+                    </div>
+                    <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                        Vì sao <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6465F1] to-[#9134EA]">bạn dạy tốt</span> nhưng tuyển sinh
+                        <br>
+                        vẫn bấp bênh?
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-[#6465F1] to-[#9134EA] mx-auto mt-6 rounded-full"></div>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div class="relative bg-white rounded-2xl border border-white p-8 md:pr-24 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] hover:border-indigo-100 transition-all overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-64 h-64 bg-indigo-50 opacity-50 blur-[60px] rounded-full pointer-events-none hidden md:block"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row gap-6">
+                            <div class="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                                <span class="material-symbols-outlined text-primary text-3xl">description</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-[18px] md:text-[20px] font-extrabold text-[#1E1B4B] mb-4">#1 - Cho rằng cứ đăng nhiều bài là sẽ có nhiều học viên</h3>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Đăng nhiều giúp bạn có thêm lượt xem, không tạo ra “lý do đủ mạnh” để chốt.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Bạn có nhiều người hỏi, nhưng không có sàng lọc → khách hỏi nhiều, chốt ít.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Bạn luôn phải giải thích từ đầu, vì học sinh chưa đủ thông tin để tự quyết.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative bg-white rounded-2xl border border-white p-8 md:pr-24 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] hover:border-indigo-100 transition-all overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-64 h-64 bg-indigo-50 opacity-50 blur-[60px] rounded-full pointer-events-none hidden md:block"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row gap-6">
+                            <div class="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                                <span class="material-symbols-outlined text-primary text-3xl">download</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-[18px] md:text-[20px] font-extrabold text-[#1E1B4B] mb-4">#2 - Cho nhiều tài liệu miễn phí và hy vọng người tải sẽ đăng ký học</h3>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Người tải tài liệu không đồng nghĩa with người sẵn sàng học: phần lớn chỉ “tải cho có”</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Tài liệu chỉ để tham khảo, thiếu tính thực thi, khó tạo ra kết quả thực tế</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Các tài liệu không có bước dẫn sang khóa học chính, học sinh không biết làm gì tiếp.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative bg-white rounded-2xl border border-white p-8 md:pr-24 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] hover:border-indigo-100 transition-all overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-64 h-64 bg-indigo-50 opacity-50 blur-[60px] rounded-full pointer-events-none hidden md:block"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row gap-6">
+                            <div class="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                                <span class="material-symbols-outlined text-primary text-3xl">menu_book</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-[18px] md:text-[20px] font-extrabold text-[#1E1B4B] mb-4">#3 - Thiếu một nơi giới thiệu thông tin khóa học rõ ràng</h3>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Học viên phải hỏi lại từ đầu vì không có nơi giải thích rõ: học cái gì, kết quả ra sao.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Nhiều người quan tâm sẽ rời đi, vì họ không có chỗ để tự tìm hiểu trước.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Bạn trở thành bộ phận giải đáp 1-1 lặp đi lặp lại cho từng người.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative bg-white rounded-2xl border border-white p-8 md:pr-[160px] shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] hover:border-indigo-100 transition-all overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-64 h-64 bg-indigo-50 opacity-50 blur-[60px] rounded-full pointer-events-none hidden md:block"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row gap-6">
+                            <div class="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                                <span class="material-symbols-outlined text-primary text-3xl">list_alt</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-[18px] md:text-[20px] font-extrabold text-[#1E1B4B] mb-4">#4 - Có bài Post/ Google form/ Landing page giới thiệu lớp học nhưng chỉ liệt kê thông tin thô</h3>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Khi người đọc chỉ nhìn thấy giáo trình - lịch học - học phí, họ có xu hướng mặc định bạn giống những thầy cô khác và quay sang so sánh giá.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Họ không thấy và hiểu “phương pháp giảng dạy độc nhất của bạn”.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-[16px] md:text-[18px] text-slate-600">
+                                        <span class="material-symbols-outlined text-rose-500 shrink-0 mt-1">close</span>
+                                        <span>Họ chỉ thấy thông tin (information), không thấy được sự chuyển hóa (trasformation).</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-[16px] md:text-[18px] text-slate-500 text-center mt-12 max-w-[800px] mx-auto leading-relaxed font-medium">
+                    Việc thu hút nhiều người xem nhưng không có hệ thống chuyển đổi giống như <strong class="text-[#1E1B4B]">đổ nước vào một cái bể bị thủng</strong>. Đổ càng nhiều, bạn càng mệt, nhưng bể vẫn không đầy.
+                </p>
+            </div>
+        </section>
+
+        <section class="px-4 py-12 md:py-16">
+            <div class="max-w-[1000px] mx-auto">
+                <div class="text-center mb-10">
+                    <div class="inline-block px-4 py-1.5 rounded-full border border-indigo-100 bg-white shadow-sm mb-6">
+                        <span class="text-[14px] font-normal text-primary tracking-wide">Đừng chờ đợi may mắn nữa!</span>
+                    </div>
+                    <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                        Tưởng tượng trong&nbsp;
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6465F1] to-[#9134EA]">14 ngày tới</span>, bạn sẽ:
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-[#6465F1] to-[#9134EA] mx-auto mt-6 rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
+                    <div class="relative z-10 bg-white rounded-3xl border border-white px-10 md:px-14 py-12 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col items-center text-center w-full max-w-[500px] h-full max-h-[450px] group">
+                        <div class="w-20 h-20 rounded-2xl bg-indigo-50 text-primary flex items-center justify-center mb-6 border border-indigo-100 shadow-sm group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-4xl">track_changes</span>
+                        </div>
+                        <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Thu hút và sàng lọc đúng người quan tâm khóa học</h3>
+                        <p class="text-[16px] md:text-[18px] text-slate-600 mb-8 flex-grow">
+                            Mà không cần làm làm nhiều content và chia sẻ tài liệu tràn lan.
+                        </p>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
+                            <span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span>
+                            <span class="text-[12px] font-bold text-emerald-700 md:uppercase tracking-wide">Hệ thống kéo đúng người về</span>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white rounded-3xl border border-white px-10 md:px-14 py-12 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col items-center text-center w-full max-w-[500px] h-full max-h-[450px] group">
+                        <div class="w-20 h-20 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center mb-6 border border-amber-100 shadow-sm group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-4xl">bolt</span>
+                        </div>
+                        <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Chốt học viên tiềm năng nhanh và mượt hơn</h3>
+                        <p class="text-[16px] md:text-[18px] text-slate-600 mb-8 flex-grow">
+                            Họ hiểu rõ phương pháp, kết quả và vì sao phải đăng ký học ngay.
+                        </p>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
+                            <span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span>
+                            <span class="text-[12px] font-bold text-emerald-700 md:uppercase tracking-wide">Hệ thống giúp họ tin ra quyết định</span>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white rounded-3xl border border-white px-10 md:px-14 py-12 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col items-center text-center w-full max-w-[500px] h-full max-h-[450px] group">
+                        <div class="w-20 h-20 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center mb-6 border border-sky-100 shadow-sm group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-4xl">filter_alt</span>
+                        </div>
+                        <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Giảm khách rác, chỉ hỏi học phí và biến mất</h3>
+                        <p class="text-[16px] md:text-[18px] text-slate-600 mb-8 flex-grow">
+                            Dành thời gian cho người phù hợp - Tư vấn ít hơn và chốt dễ hơn.
+                        </p>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
+                            <span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span>
+                            <span class="text-[12px] font-bold text-emerald-700 md:uppercase tracking-wide">Hệ thống lọc bớt khách rác</span>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white rounded-3xl border border-white px-10 md:px-14 py-12 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col items-center text-center w-full max-w-[500px] h-full max-h-[450px] group">
+                        <div class="w-20 h-20 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center mb-6 border border-orange-100 shadow-sm group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-4xl">light_mode</span>
+                        </div>
+                        <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Lấy lại thời gian &amp; sự tự do mà bạn mong muốn bấy lâu</h3>
+                        <p class="text-[16px] md:text-[18px] text-slate-600 mb-8 flex-grow">
+                            Bạn tập trung dạy tốt, mở rộng quy mô và dành thời gian cho bản thân &amp; gia đình.
+                        </p>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
+                            <span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span>
+                            <span class="text-[12px] font-bold text-emerald-700 md:uppercase tracking-wide">Hệ thống giúp bạn mở lớp nhẹ đầu hơn</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 mt-16">
+                    <a href="https://tidycal.com/phanlong/classconvert" target="_blank" rel="noopener noreferrer" class="flex items-center md:gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-primary to-indigo-500 !text-white text-[15px] md:text-[18px] font-bold hover:scale-105 transition-transform shadow-[0_15px_30px_-10px_rgba(99,102,241,0.4)]">
+                        <span class="!text-white">ĐẶT LỊCH THAM VẤN 15 PHÚT</span>
+                        <span class="material-symbols-outlined hide-on-mobile !text-white">arrow_forward</span>
+                    </a>
+                    <span class="text-[14px] text-slate-500">Để xem cách cỗ máy hoạt động</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="giai-phap" class="px-4 py-12 md:py-16">
+            <div class="max-w-[1200px] mx-auto">
+                <div class="text-center mb-10">
+                    <div class="inline-block px-4 py-1.5 rounded-full border border-indigo-100 bg-white shadow-sm mb-6">
+                        <span class="text-[14px] font-normal text-primary tracking-wide">Cách thức hoạt động như thế nào?</span>
+                    </div>
+                    <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                        Đây là cách tôi xây dựng <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6465F1] to-[#9134EA]">cỗ máy</span>
+                        <br class="hidden md:block">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6465F1] to-[#9134EA]">tuyển sinh</span>&nbsp;
+                        <br class="block md:hidden">
+                        cho bạn
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-[#6465F1] to-[#9134EA] mx-auto mt-6 rounded-full"></div>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div class="relative z-10 bg-white rounded-3xl border border-white p-8 md:py-10 md:pl-10 md:pr-32 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col md:flex-row gap-8 items-center group">
+                        <div class="w-full md:w-[400px] h-[200px] md:h-[260px] bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative group-hover:bg-indigo-50 transition-colors">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/value-1-1-20260309085059-c-7td.png" alt="Tối Ưu Chiến Lược" width="400" height="260" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                        </div>
+                        <div class="flex-1 text-left w-full">
+                            <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Tối Ưu Chiến Lược Sản Phẩm & Offer Khóa Học</h3>
+                            <p class="text-[16px] md:text-[18px] text-slate-600 mb-6">
+                                Tôi giúp bạn xác định điểm nghẽn khiến tuyển sinh, vẽ lại hành trình chuyển đổi tối ưu cho học viên.
+                                <br><br>
+                                Sau đó, đóng gói khóa học thành một offer đáng tiền với phương pháp giảng dạy độc quyền và thông điệp hấp dẫn.
+                            </p>
+                            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                <span class="text-[12px] font-bold text-primary uppercase">ĐÓNG GÓI HẤP DẪN</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white rounded-3xl border border-white p-8 md:py-10 md:pl-10 md:pr-32 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col md:flex-row gap-8 items-center group">
+                        <div class="w-full md:w-[400px] h-[200px] md:h-[260px] bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative group-hover:bg-indigo-50 transition-colors">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/value-2-1-20260309085052-2gium.png" alt="Phễu Thu Hút Lead" width="400" height="260" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                        </div>
+                        <div class="flex-1 text-left w-full">
+                            <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Xây Dựng Phễu Thu Hút Lead Tiềm Năng</h3>
+                            <p class="text-[16px] md:text-[18px] text-slate-600 mb-6">
+                                Tạo một buổi Masterclass miễn phí giải quyết 1 vấn đề cấp bách, khiến người học quan tâm sẵn sàng để lại thông tin.
+                                <br><br>
+                                Đồng thời kéo người theo dõi của bạn từ social vào nhận buổi học này và dẫn dắt họ tới khóa học chính.
+                            </p>
+                            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                <span class="text-[12px] font-bold text-primary uppercase">THU LEAD CHẤT LƯỢNG</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white rounded-3xl border border-white p-8 md:py-10 md:pl-10 md:pr-32 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col md:flex-row gap-8 items-center group">
+                        <div class="w-full md:w-[400px] h-[200px] md:h-[260px] bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative group-hover:bg-indigo-50 transition-colors">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/value-3-1-20260309085052-doyfd.png" alt="Phễu Chốt Học Viên" width="400" height="260" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                        </div>
+                        <div class="flex-1 text-left w-full">
+                            <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Xây Dựng Phễu Chốt Học Viên Đăng Ký</h3>
+                            <p class="text-[16px] md:text-[18px] text-slate-600 mb-6">
+                                Xây dựng trang giới thiệu khóa học với video giải thích + dẫn dắt giúp người xem hiểu rõ phương pháp và kết quả nhận được.
+                                <br><br>
+                                Từ đó, thuyết phục họ sẵn sàng đăng ký mà bạn không cần tư vấn và giải thích nhiều.
+                            </p>
+                            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                <span class="text-[12px] font-bold text-primary uppercase">TUYỂN SINH TỰ ĐỘNG</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white rounded-3xl border border-white p-8 md:py-10 md:pl-10 md:pr-32 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col md:flex-row gap-8 items-center group">
+                        <div class="w-full md:w-[400px] h-[200px] md:h-[260px] bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative group-hover:bg-indigo-50 transition-colors">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/value-4-1-20260309085052-djpkv.png" alt="Hệ Thống Chăm Sóc Tự Động" width="400" height="260" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                        </div>
+                        <div class="flex-1 text-left w-full">
+                            <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Setup Hệ Thống Dẫn Dắt &amp; Chăm Sóc Tự Động</h3>
+                            <p class="text-[16px] md:text-[18px] text-slate-600 mb-6">
+                                Thiết lập chuỗi email chăm sóc và tự động nhắc nhở đúng lúc để người quan tâm không “nguội lạnh” rồi biến mất.
+                                <br><br>
+                                Hệ thống sẽ dẫn dắt họ tìm hiểu kỹ hơn và chủ động đăng ký học.
+                            </p>
+                            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                <span class="text-[12px] font-bold text-primary uppercase">NUÔI DƯỠNG TỰ ĐỘNG</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white rounded-3xl border border-white p-8 md:py-10 md:pl-10 md:pr-32 shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] transition-all flex flex-col md:flex-row gap-8 items-center group">
+                        <div class="w-full md:w-[400px] h-[200px] md:h-[260px] bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative group-hover:bg-indigo-50 transition-colors">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/value-5-1-20260309085052-1jlzk.png" alt="Đo Lường &amp; Tối Ưu" width="400" height="260" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                        </div>
+                        <div class="flex-1 text-left w-full">
+                            <h3 class="text-[20px] md:text-[24px] font-extrabold text-[#1E1B4B] mb-4">Đo Lường Và Tối Ưu Theo Dữ Liệu</h3>
+                            <p class="text-[16px] md:text-[18px] text-slate-600 mb-6">
+                                Tôi theo dõi hệ thống cùng bạn để biết học viên đang vướng mắc ở đâu và thoát ở bước nào.
+                                <br><br>
+                                Sau đó tối ưu lại dựa trên dữ liệu thật để tăng tỉ lệ chuyển đổi và số lượng người đăng ký học.
+                            </p>
+                            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                <span class="text-[12px] font-bold text-primary uppercase">TỐI ƯU HIỆU SUẤT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 mt-16">
+                    <a href="https://tidycal.com/phanlong/classconvert" target="_blank" rel="noopener noreferrer" class="flex items-center md:gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-primary to-indigo-500 !text-white text-[15px] md:text-[18px] font-bold hover:scale-105 transition-transform shadow-[0_15px_30px_-10px_rgba(99,102,241,0.4)]">
+                        <span class="!text-white">TÔI MUỐN SỞ HỮU HỆ THỐNG NÀY</span>
+                        <span class="material-symbols-outlined hide-on-mobile !text-white">arrow_forward</span>
+                    </a>
+                    <span class="text-[14px] text-slate-500">Đặt lịch tham vấn để biết bạn có phù hợp hay không</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="du-an" class="px-4 py-12 md:py-16">
+            <div class="max-w-[1200px] mx-auto">
+                <div class="text-center mb-10">
+                    <div class="inline-block px-4 py-1.5 rounded-full border border-indigo-100 bg-white shadow-sm mb-6">
+                        <span class="text-[14px] font-normal text-primary tracking-wide">Bạn vẫn cảm thấy khó hình dung?</span>
+                    </div>
+                    <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                        Sản phẩm tham khảo
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-[#6465F1] to-[#9134EA] mx-auto mt-6 rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 justify-items-center">
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/1-20260308154627-vmhid.png" alt="Sản phẩm tham khảo 1" width="380" height="380" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/2-20260308154627-itw6z.png" alt="Sản phẩm tham khảo 2" width="380" height="380" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/3-20260308154627-bvl-h.png" alt="Sản phẩm tham khảo 3" width="380" height="380" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/4-20260308154627-olrz1.png" alt="Sản phẩm tham khảo 4" width="380" height="380" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/5-20260308154627-hgqqf.png" alt="Sản phẩm tham khảo 5" width="380" height="380" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/6-20260308154627-c4ssi.png" alt="Sản phẩm tham khảo 6" width="380" height="380" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/7-20260308154627-o-ojq.png" alt="Sản phẩm tham khảo 7" width="380" height="380" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/8-20260308154627-333we.png" alt="Sản phẩm tham khảo 8" width="380" height="380" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/9-20260308154627-k2m_r.png" alt="Sản phẩm tham khảo 9" width="380" height="380" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/10-20260308154627-er92x.png" alt="Sản phẩm tham khảo 10" width="380" height="380" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/11-20260308154631-zxb6d.png" alt="Sản phẩm tham khảo 11" width="380" height="380" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    </div>
+                    <div class="relative z-10 w-full md:w-[380px] aspect-square bg-slate-50 rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_15px_30px_-10px_rgba(99,102,241,0.2)] hover:border-indigo-200 transition-all overflow-hidden group">
+                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/12-20260308154631-6mhfw.png" alt="Sản phẩm tham khảo 12" width="380" height="380" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 mt-16">
+                    <a href="https://tidycal.com/phanlong/classconvert" target="_blank" rel="noopener noreferrer" class="flex items-center md:gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-primary to-indigo-500 !text-white text-[15px] md:text-[18px] font-bold hover:scale-105 transition-transform shadow-[0_15px_30px_-10px_rgba(99,102,241,0.4)]">
+                        <span class="!text-white">ĐẶT LỊCH THAM VẤN 15 PHÚT</span>
+                        <span class="material-symbols-outlined hide-on-mobile !text-white">arrow_forward</span>
+                    </a>
+                    <span class="text-[14px] text-slate-500">Để xem hệ thống này có hợp với lớp của bạn không</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-4 py-12 md:py-16 overflow-hidden">
+            <div class="max-w-[1200px] mx-auto">
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-[0_20px_60px_-15px_rgba(99,102,241,0.15)] p-6 md:p-12 flex flex-col md:flex-row gap-8 md:gap-16 items-center justify-center">
+                    <div class="w-full md:max-w-[320px] shrink-0 relative">
+                        <div class="bg-white rounded-3xl border border-slate-100 p-2 relative overflow-hidden shadow-[0_20px_50px_rgba(99,102,241,0.15)] z-10">
+                            <div class="relative rounded-2xl overflow-hidden aspect-[4/5] bg-slate-100">
+                                <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/long-nen-4-20260307074207-kzlqx.png" alt="Phan Long" width="320" height="400" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                            </div>
+                        </div>
+                    </div>
+
+                   <div class="flex-1 md:max-w-[620px] pt-2 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-6 shadow-sm">
+                        <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                        <span class="text-[14px] font-normal text-primary tracking-wide">Gặp người xây dựng hệ thống cho bạn</span>
+                    </div>
+
+                    <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] mb-6 md:capitalize">
+                        Xin chào! Tôi là
+                        <br class="block md:hidden">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6465F1] to-[#9134EA]">Phan Long</span>
+                    </h2>
+
+                    <div class="space-y-4 text-[16px] md:text-[18px] text-slate-600 mb-8 text-left">
+                        <p>Tôi hiểu việc xây 1 hệ thống tuyển sinh cho lớp online không hề dễ, nhất là khi bạn cần một người vừa hiểu marketing, vừa hiểu ngành giáo dục.</p>
+                        <p>Bạn cần 1 thứ chạy được và ra học viên, chứ không chỉ "làm cho đẹp".</p>
+                        <p>Với 8 năm kinh nghiệm Marketing và 5 năm trong ngành giáo dục (tại các trung tâm và nền tảng học ngoại ngữ), tôi đã gặp bài toán này nhiều lần.</p>
+                        <p>Bạn dạy tốt, chăm chỉ truyền thông... nhưng tuyển sinh vẫn bấp bênh.</p>
+                    </div>
+
+                    <div class="flex items-stretch gap-4 mb-8">
+                        <div class="w-1.5 bg-[#6465F1] rounded-full shrink-0"></div>
+                        <p class="text-[16px] md:text-[18px] italic text-[#1E1B4B] font-medium py-1 text-left">
+                            Nhiều lúc bạn tự hỏi: "mình có đang đi đúng đường không?"
+                        </p>
+                    </div>
+
+                    <p class="text-[16px] md:text-[18px] text-slate-600 mb-6 text-left">
+                        Tôi đã trò chuyện với nhiều giáo viên như bạn và tôi hiểu cảm giác đó.
+                    </p>
+
+                    <p class="text-[16px] md:text-[18px] font-bold text-[#1E1B4B] text-left">
+                        Vì vậy tôi tạo ra ClassConvert - Hệ thống tuyển sinh tự động giúp bạn thu hút đúng người, giảm khách rác và mở lớp đều đặn hơn mỗi kỳ.
+                    </p>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-4 py-12 md:py-16">
+            <div class="max-w-[1200px] mx-auto">
+                <div class="text-center mb-10">
+                    <div class="inline-block px-4 py-1.5 rounded-full border border-indigo-100 bg-white shadow-sm mb-6">
+                        <span class="text-[14px] font-normal text-primary tracking-wide">Cảm nhận từ khách hàng</span>
+                    </div>
+                    <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                        Một số khách hàng từng hợp tác
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-[#6465F1] to-[#9134EA] mx-auto mt-6 rounded-full"></div>
+                </div>
+
+                <div class="hidden md:grid grid-cols-3 gap-6">
+                    <div class="bg-white rounded-3xl border border-white shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] p-8 relative group hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] hover:border-indigo-100 transition-all h-full flex flex-col">
+                        <div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative mb-8 shrink-0 bg-slate-100 shadow-sm">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/ahoang2-20260305141457-aonnl.png" alt="Mr. Hoàng Tạ" width="400" height="300" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                        </div>
+                        <p class="text-[16px] text-slate-600 leading-relaxed mb-6 flex-grow">
+                            "Mr. Long đã giúp chúng tôi củng cố hiện diện thương hiệu trên online với hình ảnh chuyên nghiệp tăng khả năng chốt học viên. <strong class="text-[#1E1B4B]">Tỉ lệ chuyển đổi học viên của chúng tôi đã tăng 50% trong 3 tuần".</strong>
+                        </p>
+                        <div class="border-t border-slate-100 pt-6 mt-auto">
+                            <div class="flex items-center gap-3 mb-1">
+                                <h4 class="text-[16px] font-bold text-[#1E1B4B]">Mr. Hoàng Tạ</h4>
+                                <div class="flex gap-0.5 text-amber-400">
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                </div>
+                            </div>
+                            <p class="text-[13px] text-slate-500">Giám Đốc Hệ Thống Trung Tâm JOLO English</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-white shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] p-8 relative group hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] hover:border-indigo-100 transition-all h-full flex flex-col">
+                        <div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative mb-8 shrink-0 bg-slate-100 shadow-sm">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/linhlu2-20260305141457-cfzwd.png" alt="Mr. Linh Lư" width="400" height="300" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                        </div>
+                        <p class="text-[16px] text-slate-600 leading-relaxed mb-6 flex-grow">
+                            "Team anh Long làm việc chuyên nghiệp and nhiệt tình. Tôi thấy hài lòng với kết quả nhận được, vì tôi hình dung được những hoạt động marketing mà lớp học của tôi có thể triển khai sau khi kết thúc dự án".
+                        </p>
+                        <div class="border-t border-slate-100 pt-6 mt-auto">
+                            <div class="flex items-center gap-3 mb-1">
+                                <h4 class="text-[16px] font-bold text-[#1E1B4B]">Mr. Linh Lư</h4>
+                                <div class="flex gap-0.5 text-amber-400">
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                </div>
+                            </div>
+                            <p class="text-[13px] text-slate-500">Founder Trung Tâm Anh Ngữ Gem Education</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-white shadow-[0_15px_40px_-10px_rgba(99,102,241,0.15)] p-8 relative group hover:shadow-[0_20px_50px_-12px_rgba(99,102,241,0.25)] hover:border-indigo-100 transition-all h-full flex flex-col">
+                        <div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative mb-8 shrink-0 bg-slate-100 shadow-sm">
+                            <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/mr-binh-1-20260308123651-fn8ci.png" alt="Mr. Phạm Văn Bình" width="400" height="300" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                        </div>
+                        <p class="text-[16px] text-slate-600 leading-relaxed mb-6 flex-grow">
+                            "Hệ thống Landing page của bên anh Long được thiết kế rõ ràng, dễ hiểu, đúng nhu cầu của học viên. Sau khi triển khai, chúng tôi bắt đầu nhận được nhiều lượt đăng ký và để lại thông tin tư vấn đều đặn hơn".
+                        </p>
+                        <div class="border-t border-slate-100 pt-6 mt-auto">
+                            <div class="flex items-center gap-3 mb-1">
+                                <h4 class="text-[16px] font-bold text-[#1E1B4B]">Mr. Phạm Văn Bình</h4>
+                                <div class="flex gap-0.5 text-amber-400">
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                </div>
+                            </div>
+                            <p class="text-[13px] text-slate-500">Giám Đốc Công Ty Cổ Phần Giáo Dục VNEs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:hidden" id="testimonial-carousel">
+                    <div class="relative overflow-hidden">
+                        <div class="flex transition-transform duration-500 ease-in-out" id="testimonial-track">
+                            <div class="w-full flex-shrink-0 px-1">
+                                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 relative flex flex-col h-full">
+                                    <div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative mb-6 shrink-0 bg-slate-100 shadow-sm">
+                                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/ahoang2-20260305141457-aonnl.png" alt="Mr. Hoàng Tạ" width="400" height="300" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                    </div>
+                                    <p class="text-[16px] text-slate-600 leading-relaxed mb-6 flex-grow">
+                                        "Mr. Long đã giúp chúng tôi củng cố hiện diện thương hiệu trên online with hình ảnh chuyên nghiệp tăng khả năng chốt học viên. <strong class="text-[#1E1B4B]">Tỉ lệ chuyển đổi học viên của chúng tôi đã tăng 50% trong 3 tuần".</strong>
+                                    </p>
+                                    <div class="border-t border-slate-100 pt-6 mt-auto">
+                                        <div class="flex items-center gap-3 mb-1">
+                                            <h4 class="text-[16px] font-bold text-[#1E1B4B]">Mr. Hoàng Tạ</h4>
+                                            <div class="flex gap-0.5 text-amber-400">
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-slate-500">Giám Đốc Hệ Thống Trung Tâm JOLO English</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full flex-shrink-0 px-1">
+                                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 relative flex flex-col h-full">
+                                    <div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative mb-6 shrink-0 bg-slate-100 shadow-sm">
+                                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/linhlu2-20260305141457-cfzwd.png" alt="Mr. Linh Lư" width="400" height="300" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                    </div>
+                                    <p class="text-[16px] text-slate-600 leading-relaxed mb-6 flex-grow">
+                                        "Team anh Long làm việc chuyên nghiệp and nhiệt tình. Tôi thấy hài lòng với kết quả nhận được, vì tôi hình dung được những hoạt động marketing mà lớp học của tôi có thể triển khai sau khi kết thúc dự án".
+                                    </p>
+                                    <div class="border-t border-slate-100 pt-6 mt-auto">
+                                        <div class="flex items-center gap-3 mb-1">
+                                            <h4 class="text-[16px] font-bold text-[#1E1B4B]">Mr. Linh Lư</h4>
+                                            <div class="flex gap-0.5 text-amber-400">
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-slate-500">Founder Trung Tâm Anh Ngữ Gem Education</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full flex-shrink-0 px-1">
+                                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 relative flex flex-col h-full">
+                                    <div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative mb-6 shrink-0 bg-slate-100 shadow-sm">
+                                        <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/mr-binh-1-20260308123651-fn8ci.png" alt="Mr. Phạm Văn Bình" width="400" height="300" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                    </div>
+                                    <p class="text-[16px] text-slate-600 leading-relaxed mb-6 flex-grow">
+                                        "Hệ thống Landing page của bên anh Long được thiết kế rõ ràng, dễ hiểu, đúng nhu cầu của học viên. Sau khi triển khai, chúng tôi bắt đầu nhận được nhiều lượt đăng ký và để lại thông tin tư vấn đều đặn hơn".
+                                    </p>
+                                    <div class="border-t border-slate-100 pt-6 mt-auto">
+                                        <div class="flex items-center gap-3 mb-1">
+                                            <h4 class="text-[16px] font-bold text-[#1E1B4B]">Mr. Phạm Văn Bình</h4>
+                                            <div class="flex gap-0.5 text-amber-400">
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                                <span class="material-symbols-outlined text-sm">star</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-slate-500">Giám Đốc Công Ty Cổ Phần Giáo Dục VNEs</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-2 mt-6" id="testimonial-dots">
+                        <button class="w-6 h-2 rounded-full bg-primary transition-all duration-300" onclick="setTestimonial(0)"></button>
+                        <button class="w-2 h-2 rounded-full bg-slate-300 transition-all duration-300" onclick="setTestimonial(1)"></button>
+                        <button class="w-2 h-2 rounded-full bg-slate-300 transition-all duration-300" onclick="setTestimonial(2)"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-4 pt-12 md:pt-16 pb-6">
+          <div class="max-w-[1000px] mx-auto">
+            <div class="text-center mb-10">
+              <div class="inline-block px-4 py-1.5 rounded-full border border-emerald-100 bg-emerald-50 shadow-sm mb-6">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[#059669] text-sm">check_circle</span>
+                  <span class="text-[14px] font-normal text-[#059669] tracking-wide">Lưu ý trước khi đặt lịch</span>
+                </div>
+              </div>
+              <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                Hãy tham gia với tôi nếu bạn đang:
+              </h2>
+            </div>
+            <div class="flex flex-col gap-4 md:max-w-[834px] mx-auto">
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-indigo-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Dạy học online lớp nhóm hoặc coaching 1-1 qua Zoom/ Google Meet.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-indigo-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Kinh doanh chuyên môn, khóa học E-learning và các sản phẩm số.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-indigo-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn đã có tệp follower nhưng mỗi đợt mở lớp vẫn bấp bênh, hỏi nhiều chốt ít.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-indigo-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn đang chạy phễu sales &amp; marketing nhưng tỉ lệ đăng ký thấp, chi phí cao.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-indigo-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn sẵn sàng thay đổi để tuyển sinh nhiều hơn và thu nhập cao hơn.</span>
+                </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="px-4 pt-6 pb-12 md:pb-16">
+          <div class="max-w-[1000px] mx-auto">
+            <div class="text-center mb-10">
+              <div class="inline-block px-4 py-1.5 rounded-full border border-rose-100 bg-rose-50 shadow-sm mb-6">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-rose-500 text-sm">cancel</span>
+                  <span class="text-[14px] font-normal text-rose-600 tracking-wide">Để tiết kiệm thời gian cho bạn:</span>
+                </div>
+              </div>
+              <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] md:capitalize">
+                Điều này sẽ không phù hợp nếu:
+              </h2>
+            </div>
+
+            <div class="flex flex-col gap-4 mb-12 md:max-w-[834px] mx-auto">
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-rose-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-rose-500 text-[20px]">cancel</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn muốn có kết quả ngay lập tức nhưng không muốn chuẩn bị gì.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-rose-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-rose-500 text-[20px]">cancel</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn chỉ muốn thêm học viên nhưng không muốn chỉnh sửa cách đóng gói khóa học.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-rose-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-rose-500 text-[20px]">cancel</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn không có thời gian tối thiểu để sản xuất các tài nguyên thu hút học viên.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-rose-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-rose-500 text-[20px]">cancel</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn đang tìm giải pháp rẻ nhất, chấp nhận 'làm cho có' miễn là rẻ.</span>
+                </div>
+                <div class="relative z-10 bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm flex items-center gap-4 hover:border-rose-200 hover:shadow-md transition-all">
+                  <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-rose-500 text-[20px]">cancel</span>
+                  </div>
+                  <span class="text-[16px] md:text-[18px] text-slate-600">Bạn không muốn tăng trưởng and đã thấy ổn với quy mô &amp; thu nhập hiện tại.</span>
+                </div>
+            </div>
+
+            <p class="text-center text-[16px] md:text-[18px] text-slate-500 max-w-[800px] mx-auto font-medium">
+              Nếu bạn đọc tới đây mà vẫn thấy phù hợp, hãy đặt lịch tham vấn 15 phút để tôi vạch rõ bước tiếp theo cho lớp học của bạn.
+            </p>
+          </div>
+        </section>
+
+        <section class="px-2 md:px-4 py-12 md:py-16">
+          <div class="relative max-w-[1000px] mx-auto rounded-3xl md:rounded-[4rem] p-6 md:py-20 md:px-16 border border-white bg-white overflow-hidden flex flex-col items-center text-center shadow-[0_30px_80px_-20px_rgba(99,102,241,0.3)]">
+            
+            <div class="absolute inset-0 bg-gradient-to-br from-indigo-50/80 to-white"></div>
+            
+            <div class="relative z-10 w-full flex flex-col items-center">
+              <div class="p-[2px] rounded-full bg-gradient-to-r from-primary to-indigo-500 mb-6 inline-block shadow-md">
+                 <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/avatar-copy-20260306102208-dvngg.png" alt="ClassConvert" width="112" height="112" class="w-28 h-28 rounded-full object-cover border-4 border-white" referrerpolicy="no-referrer" loading="lazy" decoding="async">
+              </div>
+
+              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-200 bg-amber-50 mb-6 shadow-sm">
+                 <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 md:animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                 <span class="text-[14px] font-medium text-amber-600 tracking-wide">Chỉ còn 2 suất triển khai trong tháng này | Update: <span id="auto-date"></span></span>
+              </div>
+
+              <h2 class="text-[32px] md:text-[42px] font-extrabold leading-tight text-[#1E1B4B] mb-4 md:capitalize">
+                Bạn đã sẵn sàng đưa lớp học <br class="hidden md:block"> của mình <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">lên tầm cao mới?</span>
+              </h2>
+              
+              <p class="text-[16px] md:text-[18px] text-slate-600 mb-12 max-w-2xl mx-auto">
+                Đặt lịch tham vấn chiến lược miễn phí 15 phút. Tôi sẽ demo trực tiếp cách hệ thống phễu này áp dụng cho khóa học của bạn.
+              </p>
+
+              <div class="max-w-3xl w-full mx-auto rounded-2xl md:rounded-[2rem] p-[2px] bg-gradient-to-r from-[#6466F1] to-[#9134EA] shadow-sm relative">
+                  <div class="bg-slate-50 rounded-[14px] md:rounded-[30px] p-6 md:p-12 text-left relative w-full h-full">
+                    <p class="text-slate-600 text-[16px] md:text-lg mb-8">
+                      Sau cuộc gọi, bạn sẽ có 1 bức tranh rõ ràng về quy trình tuyển sinh, cách triển khai hệ thống and đánh giá xem chúng ta có phù hợp không?
+                    </p>
+                    
+                    <p class="text-[#1E1B4B] font-bold text-[16px] md:text-lg mb-6">Hãy hành động ngay nếu bạn muốn:</p>
+                    
+                    <ul class="space-y-4 mb-10">
+                        <li class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="material-symbols-outlined text-emerald-600 text-[16px]">check_circle</span>
+                            </div>
+                            <span class="text-slate-600 text-[16px] md:text-[18px]">Có dòng học viên đều đặn hơn mỗi tháng, thay vì chờ may mắn</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="material-symbols-outlined text-emerald-600 text-[16px]">check_circle</span>
+                            </div>
+                            <span class="text-slate-600 text-[16px] md:text-[18px]">Giảm khách rác hỏi học phí and mặc cả, chỉ thu hút người phù hợp</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="material-symbols-outlined text-emerald-600 text-[16px]">check_circle</span>
+                            </div>
+                            <span class="text-slate-600 text-[16px] md:text-[18px]">Chủ động hơn trong kế hoạch mở lớp and tăng trưởng quy mô</span>
+                        </li>
+                    </ul>
+
+                    <div class="text-center w-full">
+                      <a href="https://tidycal.com/phanlong/classconvert" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center md:gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-primary to-indigo-500 !text-white text-[14px] md:text-[18px] font-bold hover:scale-105 transition-transform shadow-xl shadow-indigo-200 mb-2 mx-auto w-full md:w-auto uppercase">
+                        <span class="!text-white">ĐẶT LỊCH THAM VẤN 15 PHÚT</span>
+                        <span class="material-symbols-outlined hide-on-mobile !text-white">arrow_forward</span>
+                      </a>
+                      <p class="text-[14px] text-slate-500 font-medium italic mt-3">
+                        *Bấm nút chuyển sang trang đặt lịch để điền thông tin and chọn khung giờ phù hợp.
+                      </p>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="cau-hoi" class="px-4 py-12 md:py-16 relative z-10">
+          <div class="max-w-4xl mx-auto">
+             <div class="text-center mb-10">
+               <div class="inline-block px-4 py-1.5 rounded-full border border-indigo-100 bg-white shadow-sm mb-6">
+                 <span class="text-[14px] font-normal text-primary tracking-wide">Bạn còn thắc mắc?</span>
+               </div>
+               <h2 class="text-[32px] md:text-[36px] font-extrabold text-[#1E1B4B] mb-4 md:capitalize">
+                 Câu hỏi phổ biến trước khi bắt đầu
+               </h2>
+               <div class="w-24 h-1 bg-gradient-to-r from-[#6465F1] to-[#9134EA] mx-auto rounded-full"></div>
+             </div>
+ 
+             <div class="space-y-4">
+                 <details class="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm transition-all hover:border-indigo-200 relative z-10">
+                   <summary class="flex justify-between items-center p-6 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden">
+                     <span class="text-[16px] md:text-[18px] font-semibold text-[#1E1B4B]">Tôi chưa chạy QC, chỉ có follower trên TikTok/Facebook/YouTube có làm được không?</span>
+                     <span class="material-symbols-outlined text-primary transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                   </summary>
+                   <div class="px-6 pb-6 text-slate-600 text-[16px] md:text-[18px] leading-relaxed border-t border-slate-50 pt-4">
+                     Hoàn toàn được. Hệ thống này giúp bạn tận dụng tối đa lượng traffic tự nhiên từ kênh của bạn để chuyển đổi thành học viên trả phí mà không nhất thiết phải phụ thuộc vào quảng cáo ngay từ đầu.
+                   </div>
+                 </details>
+                 
+                 <details class="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm transition-all hover:border-indigo-200 relative z-10">
+                   <summary class="flex justify-between items-center p-6 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden">
+                     <span class="text-[16px] md:text-[18px] font-semibold text-[#1E1B4B]">Tôi không giỏi kỹ thuật, liệu có phức tạp and tốn thời gian không?</span>
+                     <span class="material-symbols-outlined text-primary transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                   </summary>
+                   <div class="px-6 pb-6 text-slate-600 text-[16px] md:text-[18px] leading-relaxed border-t border-slate-50 pt-4">
+                     Hệ thống được thiết kế để tối ưu hóa quy trình. Chúng tôi sẽ hỗ trợ bạn setup ban đầu and hướng dẫn chi tiết. Sau khi vận hành, nó sẽ giúp bạn tiết kiệm thời gian hơn so với cách làm thủ công.
+                   </div>
+                 </details>
+                 
+                 <details class="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm transition-all hover:border-indigo-200 relative z-10">
+                   <summary class="flex justify-between items-center p-6 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden">
+                     <span class="text-[16px] md:text-[18px] font-semibold text-[#1E1B4B]">Tôi có cần quay video giới thiệu khóa học dài hay nói thật hay mới hiệu quả không?</span>
+                     <span class="material-symbols-outlined text-primary transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                   </summary>
+                   <div class="px-6 pb-6 text-slate-600 text-[16px] md:text-[18px] leading-relaxed border-t border-slate-50 pt-4">
+                     Không cần video quá dài hay kỹ thuật quay dựng phức tạp. Quan trọng là nội dung đánh đúng vào nỗi đau and nhu cầu của học viên. Chúng tôi có kịch bản mẫu để bạn tham khảo.
+                   </div>
+                 </details>
+                 
+                 <details class="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm transition-all hover:border-indigo-200 relative z-10">
+                   <summary class="flex justify-between items-center p-6 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden">
+                     <span class="text-[16px] md:text-[18px] font-semibold text-[#1E1B4B]">Nhỡ làm xong vẫn ra khách rác hoặc hỏi học phí rồi biến mất thì sao?</span>
+                     <span class="material-symbols-outlined text-primary transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                   </summary>
+                   <div class="px-6 pb-6 text-slate-600 text-[16px] md:text-[18px] leading-relaxed border-t border-slate-50 pt-4">
+                     Đó chính là lý do chúng ta cần hệ thống phễu lọc. Quy trình này sẽ giúp loại bỏ những người không phù hợp ngay từ đầu, chỉ giữ lại những người thực sự quan tâm and có khả năng chi trả.
+                   </div>
+                 </details>
+                 
+                 <details class="group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm transition-all hover:border-indigo-200 relative z-10">
+                   <summary class="flex justify-between items-center p-6 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden">
+                     <span class="text-[16px] md:text-[18px] font-semibold text-[#1E1B4B]">Cuộc gọi tham vấn 15 phút để làm gì, and tôi cần chuẩn bị gì?</span>
+                     <span class="material-symbols-outlined text-primary transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                   </summary>
+                   <div class="px-6 pb-6 text-slate-600 text-[16px] md:text-[18px] leading-relaxed border-t border-slate-50 pt-4">
+                     Cuộc gọi này để chúng tôi hiểu rõ hơn về tình hình hiện tại của bạn and xem liệu giải pháp này có phù hợp không. Bạn chỉ cần chuẩn bị tinh thần cởi mở and những câu hỏi bạn đang thắc mắc.
+                   </div>
+                 </details>
+             </div>
+
+             <div class="mt-12 flex flex-col items-center">
+                <a href="https://tidycal.com/phanlong/classconvert" target="_blank" rel="noopener noreferrer" class="flex items-center md:gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-primary to-indigo-500 !text-white text-[15px] md:text-[18px] font-bold hover:scale-105 transition-transform shadow-[0_15px_30px_-10px_rgba(99,102,241,0.4)]">
+                  <span class="!text-white">ĐẶT LỊCH THAM VẤN 15 PHÚT</span>
+                  <span class="material-symbols-outlined hide-on-mobile !text-white">arrow_forward</span>
+                </a>
+                <p class="text-sm text-slate-500 mt-4 font-medium">
+                  Bắt đầu xây dựng cỗ máy tuyển sinh của bạn
+                </p>
+             </div>
+          </div>
+        </section>
+
+        <footer class="border-t border-slate-200 py-12 relative z-10 bg-transparent">
+          <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
+             <div class="flex items-center justify-center gap-2 mb-6 h-8 md:h-10">
+                <img src="https://w.ladicdn.com/615e97ab04a20500141ed38e/logo-classconvert-20250519084330-b4vgc.png" alt="ClassConvert" class="w-auto object-contain" referrerpolicy="no-referrer">
+             </div>
+             
+             <p class="text-slate-500 text-xs mb-6 font-bold uppercase tracking-widest">
+               @2026 | ALL RIGHTS RESERVED
+             </p>
+             
+             <div class="flex items-center justify-center gap-4 text-xs text-slate-500 font-medium">
+               <a href="#" class="hover:text-primary transition-colors">PRIVACY POLICY</a>
+               <span class="text-slate-300">|</span>
+               <a href="#" class="hover:text-primary transition-colors">TERMS OF SERVICE</a>
+               <span class="text-slate-300">|</span>
+               <a href="#" class="hover:text-primary transition-colors">COOKIES PRIVACY</a>
+             </div>
+          </div>
+        </footer>
+    </main>
+
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget" class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end">
+        <!-- Chat Window -->
+        <div id="chat-window" class="hidden w-[350px] md:w-[400px] h-[550px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(99,102,241,0.3)] border border-indigo-50 flex flex-col overflow-hidden mb-4 transition-all duration-300 scale-95 opacity-0 origin-bottom-right">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-primary to-indigo-600 p-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                        <span class="material-symbols-outlined text-white">smart_toy</span>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold text-sm leading-none">ClassConvert Bot</h4>
+                        <p class="text-indigo-100 text-[11px] mt-1 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Đang trực tuyến
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white/80 hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Messages Box -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50/50">
+                <!-- Bot Welcome Message -->
+            </div>
+
+            <!-- FAQ Suggestions -->
+            <div id="chat-suggestions" class="p-3 border-t border-slate-100 bg-white space-y-2 max-h-[150px] overflow-y-auto">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-2">Thầy cô muốn hỏi gì ạ?</p>
+                <div class="flex flex-wrap gap-2" id="faq-buttons">
+                    <!-- FAQ buttons will be injected here -->
+                </div>
+            </div>
+
+            <!-- Message Input Area -->
+            <div class="p-4 bg-white border-t border-slate-100 flex flex-col gap-3">
+                <div class="flex items-center gap-2 bg-slate-100 rounded-xl px-4 py-2">
+                    <input type="text" id="chat-input" placeholder="Gõ câu hỏi tại đây..." class="flex-1 bg-transparent border-none focus:outline-none text-sm py-1">
+                    <button onclick="handleUserInput()" class="text-primary hover:scale-110 transition-transform flex items-center">
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </div>
+                <a href="https://tidycal.com/phanlong/classconvert" target="_blank" class="text-[12px] font-bold text-primary text-center hover:underline">
+                    Hoặc Đặt Lịch Tham Vấn Ngay 
+                </a>
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <button id="chat-toggle" onclick="toggleChat()" class="w-16 h-16 rounded-full bg-primary text-white shadow-[0_10px_25px_rgba(99,102,241,0.5)] flex items-center justify-center hover:scale-110 transition-transform duration-300 relative group">
+            <span class="material-symbols-outlined text-3xl transition-transform duration-300 group-hover:rotate-12">chat</span>
+            <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold">1</span>
+        </button>
+    </div>
+
+    <script>// Tailwind Configuration
+tailwind.config = {
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ['Manrope', 'sans-serif'],
+            },
+            colors: {
+                primary: '#6366F1', 
+                secondary: '#22D3EE',
+            },
+            animation: {
+                glow: 'glow 2s infinite ease-in-out',
+            },
+            keyframes: {
+                glow: {
+                    '0%, 100%': { boxShadow: '0 0 10px rgba(99, 102, 241, 0.2)', transform: 'scale(1)' },
+                    '50%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.4), 0 0 10px rgba(255, 255, 255, 0.5)', transform: 'scale(1.02)' },
+                }
+            }
+        }
+    }
+}
+
+// Logic & Interactions
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('touchstart', function() {}, {passive: true});
+
+    let currentTestimonial = 0;
+    const track = document.getElementById('testimonial-track');
+    const dots = document.getElementById('testimonial-dots');
+    const totalTestimonials = 3;
+
+    function setTestimonial(index) {
+        currentTestimonial = index;
+        updateCarousel();
+    }
+
+    // Expose setTestimonial to global window for onclick attributes
+    window.setTestimonial = setTestimonial;
+
+    function updateCarousel() {
+        if(!track || !dots) return; 
+        const percentage = currentTestimonial * -100;
+        track.style.transform = `translateX(${percentage}%)`;
+        
+        const dotElements = dots.children;
+        for (let i = 0; i < dotElements.length; i++) {
+            if (i === currentTestimonial) {
+                dotElements[i].classList.remove('bg-slate-300', 'w-2');
+                dotElements[i].classList.add('bg-primary', 'w-6');
+            } else {
+                dotElements[i].classList.add('bg-slate-300', 'w-2');
+                dotElements[i].classList.remove('bg-primary', 'w-6');
+            }
+        }
+    }
+
+    if(track) {
+        setInterval(() => {
+            currentTestimonial = (currentTestimonial + 1) % totalTestimonials;
+            updateCarousel();
+        }, 5000);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Script Tự động cập nhật ngày giờ VN
+    const dateElement = document.getElementById("auto-date");
+    if (dateElement) {
+        const options = { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric' };
+        const today = new Date().toLocaleDateString('vi-VN', options);
+        dateElement.textContent = today;
+    }
+});
+
+// Chatbot Logic
+const faqData = [
+    { q: "Có follower tự nhiên làm được không?", keywords: ["follower", "tự nhiên", "facebook", "tiktok", "quảng cáo", "qc"], a: "Hoàn toàn được thầy cô nhé! Hệ thống ClassConvert giúp thầy cô tận dụng tối đa lượng traffic tự nhiên hiện có để chuyển đổi họ thành học viên trả phí hiệu quả hơn." },
+    { q: "Không rành kỹ thuật vận hành nổi không?", keywords: ["kỹ thuật", "công nghệ", "phức tạp", "khó", "setup"], a: "Thầy cô yên tâm, phần khó nhất là setup hệ thống thì tôi và đội ngũ đã làm hết trong 14 ngày rồi. Thầy cô chỉ cần thao tác 'cắm và chạy' thôi ạ." },
+    { q: "Tại sao nên chọn ClassConvert?", keywords: ["tại sao", "khác biệt", "ưu điểm", "lợi ích"], a: "Tôi kết hợp 8 năm làm Marketing và 5 năm thực chiến ngành giáo dục để xây dựng cho thầy cô một 'cỗ máy' biết tự lọc khách và chốt đơn." },
+    { q: "Dịch vụ giá bao nhiêu?", keywords: ["giá", "bao nhiêu", "tiền", "phí", "đắt", "học phí", "đầu tư"], a: "Về chi phí, thay vì nhìn vào con số, thầy cô hãy nhìn vào kết quả. Nếu hệ thống giúp thầy cô tăng thêm 5-10 học viên/tháng và tiết kiệm 80% thời gian tư vấn, thì đây là khoản đầu tư cực kỳ xứng đáng. Để có báo giá chính xác theo quy mô của thầy cô, tôi nên trao đổi với thầy cô trong 15 phút ạ." },
+    { q: "Có phù hợp với môn của tôi không?", keywords: ["phù hợp", "đặc thù", "môn dạy", "áp dụng", "dành cho ai", "đúng không", "có dùng được"], a: "Hệ thống cực kỳ phù hợp nếu thầy cô dạy online lớp nhóm, coaching 1-1 hoặc bán khóa học Elearning. Chỉ cần thầy cô sẵn sàng thay đổi để tuyển sinh nhiều hơn, ClassConvert sẽ giúp được thầy cô ạ." },
+    { q: "Để thầy cô nghĩ thêm đã...", keywords: ["nghĩ thêm", "suy nghĩ", "cân nhắc", "xem lại", "từ từ", "chưa vội", "để sau"], a: "Dạ vâng, thầy cô cứ cân nhắc kỹ ạ. Tuy nhiên, nếu thầy cô còn băn khoăn điểm nào hoặc muốn xem Demo trực tiếp cho môn của mình thì cứ đặt lịch 15 phút trao đổi miễn phí với tôi nhé, sẽ rõ ràng hơn rất nhiều ạ!" },
+    { q: "Bao lâu thì hệ thống chạy được?", keywords: ["bao lâu", "thời gian", "mấy ngày", "nhanh không"], a: "Đúng 14 ngày thầy cô nhé! Quy trình đã được tối ưu hóa để thầy cô bắt đầu đón khách ngay sau 2 tuần." },
+    { q: "Quay video có cần chuyên nghiệp?", keywords: ["video", "quay", "clip", "nói"], a: "Không cần đâu ạ! Video chân thực bằng điện thoại đôi khi còn hiệu quả hơn quay dựng cầu kỳ nếu nội dung đánh đúng nỗi đau khách hàng." },
+    { q: "Lọc khách rác thế nào?", keywords: ["khách rác", "lọc", "phễu", "chất lượng"], a: "Chúng ta có phễu lọc qua buổi Masterclass và khảo sát đầu vào. Hệ thống sẽ tự loại những người không phù hợp ngay từ đầu." },
+    { q: "Tham vấn 15 phút làm gì?", keywords: ["15 phút", "tham vấn", "gọi", "nói chuyện"], a: "Cuộc gọi này để tôi Demo trực tiếp cách cỗ máy ClassConvert áp dụng vào đúng trường hợp của thầy cô trước khi thầy cô quyết định." }
+];
+
+function toggleChat() {
+    const chatWin = document.getElementById('chat-window');
+    chatWin.classList.toggle('active');
+    chatWin.classList.toggle('hidden');
+    
+    const msgBox = document.getElementById('chat-messages');
+    if (msgBox.children.length === 0) {
+        setTimeout(() => {
+            appendMessage("bot", "Chào thầy cô! Rất vui vì thầy cô đã quan tâm đến ClassConvert. Thầy cô đang muốn tìm cách để lớp học luôn đầy chỗ mà không cần phải tư vấn 1-1 mệt mỏi đúng không?");
+        }, 500);
+    }
+}
+
+function appendMessage(sender, text) {
+    const msgBox = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = sender === "bot" ? "bot-msg" : "user-msg";
+    div.innerText = text;
+    msgBox.appendChild(div);
+    msgBox.scrollTop = msgBox.scrollHeight;
+}
+
+function handleFAQ(index) {
+    const faq = faqData[index];
+    appendMessage("user", faq.q);
+    
+    // Hide suggestions after first interaction
+    document.getElementById('chat-suggestions').classList.add('hidden');
+    
+    setTimeout(() => {
+        appendMessage("bot", faq.a);
+    }, 600);
+}
+
+function handleUserInput() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim().toLowerCase();
+    if (!text) return;
+
+    appendMessage("user", input.value);
+    input.value = "";
+    
+    // Hide suggestions after first interaction
+    document.getElementById('chat-suggestions').classList.add('hidden');
+
+    setTimeout(() => {
+        // Simple keywords matching
+        let answer = "Câu hỏi này rất hay, nhưng để trả lời chính xác nhất cho trường hợp của thầy cô, có lẽ chúng ta nên trao đổi trực tiếp 15 phút ạ. Thầy cô có thể đặt lịch ngay bên dưới nhé!";
+        
+        for (let item of faqData) {
+            if (item.keywords.some(k => text.includes(k))) {
+                answer = item.a;
+                break;
+            }
+        }
+        
+        appendMessage("bot", answer);
+    }, 800);
+}
+
+// Support Enter key
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('chat-input');
+    if (input) {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUserInput();
+        });
+    }
+
+    const faqContainer = document.getElementById('faq-buttons');
+    if (faqContainer) {
+        faqData.forEach((item, index) => {
+            const btn = document.createElement('button');
+            btn.className = "faq-btn";
+            btn.innerText = item.q;
+            btn.onclick = () => handleFAQ(index);
+            faqContainer.appendChild(btn);
+        });
+    }
+});
+</script>
+</body>
+</html>

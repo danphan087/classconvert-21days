@@ -1,0 +1,85 @@
+html { scroll-behavior: smooth; }
+
+body { 
+    background-color: #F5F6FD; 
+    background-image: linear-gradient(to right, #EEEFFD 1px, transparent 1px),
+                      linear-gradient(to bottom, #EEEFFD 1px, transparent 1px);
+    background-size: 40px 40px;
+    color: #1E293B; 
+    font-family: 'Manrope', sans-serif; 
+    overflow-x: hidden; 
+}
+
+img { height: 100% !important; }
+.material-symbols-outlined { vertical-align: middle; }
+
+@media (max-width: 767px) {
+    .hide-on-mobile { display: none !important; }
+}
+
+@media (min-width: 768px) {
+    .path-animate {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw 2s ease-in-out forwards;
+    }
+    .path-animate-delay {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw 2.2s ease-in-out forwards 0.2s;
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Chatbot Custom Styles */
+#chat-window.active {
+    display: flex !important;
+    animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    from { transform: scale(0.95) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.bot-msg {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 0 16px 16px 16px;
+    padding: 12px 16px;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1E293B;
+}
+
+.user-msg {
+    background: #6366F1;
+    color: white;
+    border-radius: 16px 16px 0 16px;
+    padding: 12px 16px;
+    align-self: flex-end;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.faq-btn {
+    font-size: 12px;
+    padding: 8px 14px;
+    background: #F1F5F9;
+    color: #475569;
+    border-radius: 99px;
+    border: 1px solid #E2E8F0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.faq-btn:hover {
+    background: #EEF2FF;
+    color: #6366F1;
+    border-color: #6366F1;
+}
