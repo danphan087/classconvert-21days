@@ -1151,6 +1151,48 @@
              </div>
           </div>
         </footer>
+        <!-- Payment Section -->
+        <section id="thanh-toan" class="px-4 py-12 md:py-16 bg-slate-50">
+            <div class="max-w-[800px] mx-auto text-center">
+                <h2 class="text-[32px] md:text-[42px] font-extrabold text-[#1E1B4B] mb-6">Bắt đầu bứt phá ngay hôm nay</h2>
+                <p class="text-slate-600 mb-10">Sở hữu toàn bộ hệ thống ClassConvert chỉ với 5.000đ (Bản Demo)</p>
+                
+                <div id="sepay-checkout" class="bg-white p-8 rounded-3xl shadow-xl border border-indigo-50 max-w-[450px] mx-auto">
+                    <div id="payment-ui">
+                        <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Quét mã để thanh toán</p>
+                        <div class="mb-6 relative inline-block">
+                            <img id="sepay-qr" src="" alt="QR Thanh Toán" class="w-64 h-64 mx-auto rounded-xl border border-slate-100 p-2">
+                            <div id="payment-loader" class="mt-4 flex items-center justify-center gap-2 text-primary font-bold">
+                                <span class="loader"></span> Đang chờ chuyển khoản...
+                            </div>
+                        </div>
+                        
+                        <div class="text-left bg-slate-50 p-6 rounded-2xl space-y-3 text-sm">
+                            <div class="flex justify-between"><span>Ngân hàng:</span> <strong class="text-slate-900">ACB</strong></div>
+                            <div class="flex justify-between"><span>Số tài khoản:</span> <strong class="text-slate-900">29947747</strong></div>
+                            <div class="flex justify-between"><span>Chủ tài khoản:</span> <strong class="text-slate-900">PHAN HO HAI LONG</strong></div>
+                            <div class="flex justify-between border-t border-slate-200 pt-3"><span>Số tiền:</span> <strong class="text-rose-600 text-lg">5.000đ</strong></div>
+                            <div class="flex justify-between items-center bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                                <span>Nội dung chuyển:</span>
+                                <strong id="sepay-message" class="text-primary text-xl tracking-wider">...</strong>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-4">*Thanh toán sẽ được tự động xác nhận trong 10-30 giây.</p>
+                    </div>
+
+                    <!-- Success UI (Hidden by default) -->
+                    <div id="payment-success" class="hidden py-10">
+                        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="material-symbols-outlined text-5xl">check_circle</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Thanh toán thành công!</h3>
+                        <p class="text-slate-600 mb-8">Cảm ơn bạn đã tin tưởng ClassConvert. Hệ thống sẽ bắt đầu khởi tạo cho bạn ngay bây giờ.</p>
+                        <button onclick="window.location.reload()" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg shadow-indigo-200">Bắt đầu trải nghiệm</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Chatbot Widget -->

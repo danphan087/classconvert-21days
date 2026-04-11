@@ -181,3 +181,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// SePay Payment Automation Logic
+const SEPAY_CONFIG = {
+    apiKey: "YOUR_API_TOKEN_HERE", // DÁN MÃ API TOKEN CỦA BẠN VÀO ĐÂY
+    accountNumber: "29947747",
+    bank: "ACB",
+    amount: 5000
+};
+
+let paymentMessage = "";
+
+function initPayment() {
+    // Tạo nội dung chuyển khoản ngẫu nhiên
+    paymentMessage = "CC21D" + Math.floor(1000 + Math.random() * 9000);
+    const msgElement = document.getElementById('sepay-message');
+    const qrElement = document.getElementById('sepay-qr');
+    
+    if (msgElement) msgElement.innerText = paymentMessage;
+    
+    // Tạo link QR VietQR
+    if (qrElement) {
+        qrElement.src = `https://qr.sepay.vn/img?acc=${SEPAY_CONFIG.accountNumber}&bank=${SEPAY_CONFIG.bank}&amount=${SEPAY_CONFIG.amount}&des=${paymentMessage}&template=compact`;
+    }
+
+    const checkInterval = setInterval(async () => {
+        const isPaid = await checkPaymentStatus();
+        if (isPaid) {
+            clearInterval(checkInterval);
+            showPaymentSuccess();
+        }
+    }, 5000);
+}
+
+async function checkPaymentStatus() {
+    if (SEPAY_CONFIG.apiKey === "YOUR_API_TOKEN_HERE") return false;
+    try {
+        const response = await fetch(`https://api.sepay.vn/user/transactions/list?account_number=${SEPAY_CONFIG.accountNumber}&limit=20`, {
+            headers: {
+                'Authorization': `Bearer ${SEPAY_CONFIG.apiKey}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        if (data.transactions) {
+            const found = data.transactions.find(t => 
+                t.transaction_content.includes(paymentMessage) && 
+                parseFloat(t.amount_in) >= SEPAY_CONFIG.amount
+            );
+            return !!found;
+        }
+    } catch (e) { console.error(e); }
+    return false;
+}
+
+function showPaymentSuccess() {
+    const ui = document.getElementById('payment-ui');
+    const success = document.getElementById('payment-success');
+    if (ui) ui.classList.add('hidden');
+    if (success) success.classList.remove('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('sepay-checkout')) {
+        initPayment();
+    }
+});
