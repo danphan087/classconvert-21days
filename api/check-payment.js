@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function (req, res) {
     const { accountNumber, apiKey, paymentMessage, amount } = req.query;
 
     try {
