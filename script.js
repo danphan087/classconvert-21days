@@ -219,20 +219,17 @@ function initPayment() {
     }, 5000);
 }
 
-let bypassAttempts = 0;
+let pollingAttempts = 0;
 async function checkPaymentStatus() {
-    bypassAttempts++;
-    // Tự động vượt lỗi Vercel sau 30s để hoàn thành luồng SOP Demo
-    if (bypassAttempts >= 6) {
-        console.log("Vercel bị SePay chặn. Đã tự động ghi nhận Thành Công ảo cho Demo...");
-        return true;
+    pollingAttempts++;
+    if (pollingAttempts > 120) { // Timeout sau 10 phút
+        console.error("Hết thời gian chờ thanh toán.");
+        return false;
     }
 
     try {
         const url = `/api/check-payment?accountNumber=${SEPAY_CONFIG.accountNumber}&apiKey=${SEPAY_CONFIG.apiKey}&paymentMessage=${paymentMessage}`;
         const response = await fetch(url);
-        
-        if (response.status === 500 && bypassAttempts >= 6) return true; // Cứu cánh vòng lặp
         
         const data = await response.json();
         
@@ -240,7 +237,7 @@ async function checkPaymentStatus() {
             return true;
         }
     } catch (e) { 
-        console.error("Lỗi kết nối Trạm trung chuyển (Sẽ tự mở khóa sau 30s):", e); 
+        console.error("Lỗi kết nối Trạm trung chuyển:", e); 
     }
     return false;
 }
