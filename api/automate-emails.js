@@ -63,15 +63,11 @@ export default async function handler(req, res) {
         const { email } = req.body;
         const isTest = email.includes('+test');
 
-        // Đối với tài khoản chưa verify domain, Resend bắt buộc email nhận phải khớp 100% 
-        // với email đăng ký. Chúng ta sẽ "lách" bằng cách gửi về email gốc nếu là test.
-        const targetEmail = isTest ? email.split('+')[0] + '@' + email.split('@')[1] : email;
-
         const configPath = path.join(process.cwd(), 'resend_config.txt');
         const apiKey = fs.readFileSync(configPath, 'utf8').trim();
 
         const sendEmail = async (template) => {
-            const resp = await fetch('https://api.resend.com/emails', {
+            return fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
@@ -79,27 +75,26 @@ export default async function handler(req, res) {
                 },
                 body: JSON.stringify({
                     from: 'ClassConvert <onboarding@resend.dev>',
-                    to: [targetEmail],
+                    to: [email],
                     subject: template.subject,
                     html: template.html
                 })
             });
-            return resp.json();
         };
 
         if (isTest) {
-            await sendEmail(emails.welcome);
-            await sendEmail(emails.nurture);
-            await sendEmail(emails.sales);
-            return res.status(200).json({ success: true, mode: 'test', message: 'Sent all 3 emails to base email account (alias bypass).' });
+            console.log("Kích hoạt chế độ TEST cho:", email);
+            const r1 = await sendEmail(emails.welcome);
+            const r2 = await sendEmail(emails.nurture);
+            const r3 = await sendEmail(emails.sales);
+            return res.status(200).json({ success: true, mode: 'test', results: [r1.status, r2.status, r3.status] });
         } else {
-            // Gửi Email 1 ngay lập tức
-            await sendEmail(emails.welcome);
-            // Lưu ý: Email 2 và 3 thực tế cần worker/cron để delay. 
-            // Trong phạm vi bài học này, chúng ta tập trung vào luồng gửi và chế độ test.
-            return res.status(200).json({ success: true, mode: 'production', message: 'Welcome email sent.' });
+            console.log("Gửi Email Welcome cho:", email);
+            const r1 = await sendEmail(emails.welcome);
+            return res.status(200).json({ success: true, mode: 'production', result: r1.status });
         }
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error("Lỗi Automation:", error);
+        return res.status(500).json({ success: false, error: error.message });
     }
 }
