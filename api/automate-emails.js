@@ -63,11 +63,15 @@ export default async function handler(req, res) {
         const { email } = req.body;
         const isTest = email.includes('+test');
 
+        // Đối với tài khoản chưa verify domain, Resend bắt buộc email nhận phải khớp 100% 
+        // với email đăng ký. Chúng ta sẽ "lách" bằng cách gửi về email gốc nếu là test.
+        const targetEmail = isTest ? email.split('+')[0] + '@' + email.split('@')[1] : email;
+
         const configPath = path.join(process.cwd(), 'resend_config.txt');
         const apiKey = fs.readFileSync(configPath, 'utf8').trim();
 
         const sendEmail = async (template) => {
-            return fetch('https://api.resend.com/emails', {
+            const resp = await fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
@@ -75,19 +79,19 @@ export default async function handler(req, res) {
                 },
                 body: JSON.stringify({
                     from: 'ClassConvert <onboarding@resend.dev>',
-                    to: [email],
+                    to: [targetEmail],
                     subject: template.subject,
                     html: template.html
                 })
             });
+            return resp.json();
         };
 
         if (isTest) {
-            // Gửi toàn bộ 3 email ngay lập tức cho chế độ test
             await sendEmail(emails.welcome);
             await sendEmail(emails.nurture);
             await sendEmail(emails.sales);
-            return res.status(200).json({ success: true, mode: 'test', message: 'Sent all 3 emails immediately.' });
+            return res.status(200).json({ success: true, mode: 'test', message: 'Sent all 3 emails to base email account (alias bypass).' });
         } else {
             // Gửi Email 1 ngay lập tức
             await sendEmail(emails.welcome);
