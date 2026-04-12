@@ -99,16 +99,26 @@
     </div>
 
     <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
-            <h3 id="modal-title" class="text-2xl font-bold mb-6">Thêm Sản phẩm</h3>
+            <h3 id="modal-title" class="text-2xl font-bold mb-6 text-[#1E1B4B]">Thêm mới</h3>
             <form id="entry-form" class="space-y-4">
-                <input type="text" id="field1" placeholder="Tên sản phẩm..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none" required>
-                <input type="number" id="field2" placeholder="Giá..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none" required>
-                <input type="number" id="field3" placeholder="Số lượng kho..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none" required>
+                <div>
+                    <label id="label1" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Tên</label>
+                    <input type="text" id="field1" placeholder="..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-semibold" required>
+                </div>
+                <div>
+                    <label id="label2" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Giá / SĐT</label>
+                    <input type="text" id="field2" placeholder="..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-semibold" required>
+                </div>
+                <div>
+                    <label id="label3" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Kho / Email</label>
+                    <input type="text" id="field3" placeholder="..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-semibold" required>
+                </div>
+                
                 <div class="flex gap-4 pt-4">
-                    <button type="button" onclick="closeModal()" class="flex-1 py-4 text-slate-500 font-bold">Hủy</button>
-                    <button type="submit" class="flex-1 py-4 bg-[#6366f1] text-white rounded-2xl font-bold shadow-lg">Lưu lại</button>
+                    <button type="button" onclick="closeModal()" class="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition-all">Hủy</button>
+                    <button type="submit" class="flex-1 py-4 bg-[#6366F1] text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">Lưu lại</button>
                 </div>
             </form>
         </div>
@@ -223,12 +233,14 @@
 
         document.getElementById('entry-form').onsubmit = async (e) => {
             e.preventDefault();
-            const name = document.getElementById('field1').value;
-            const price = document.getElementById('field2').value;
-            const stock = document.getElementById('field3').value;
+            const f1 = document.getElementById('field1').value;
+            const f2 = document.getElementById('field2').value;
+            const f3 = document.getElementById('field3').value;
 
             if (currentTab === 'products') {
-                await _supabase.from('products').insert([{ name, price, stock_quantity: stock }]);
+                await _supabase.from('products').insert([{ name: f1, price: f2, stock_quantity: f3 }]);
+            } else if (currentTab === 'customers') {
+                await _supabase.from('customers').insert([{ name: f1, phone: f2, email: f3 }]);
             }
             closeModal();
             loadData();
@@ -247,8 +259,32 @@
             loadData();
         }
 
-        function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function openModal() { 
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const l1 = document.getElementById('label1');
+            const l2 = document.getElementById('label2');
+            const l3 = document.getElementById('label3');
+            
+            if (currentTab === 'products') {
+                title.innerText = "Thêm Sản phẩm mới";
+                l1.innerText = "Tên Sản phẩm";
+                l2.innerText = "Giá (vnđ)";
+                l3.innerText = "Số lượng kho";
+            } else if (currentTab === 'customers') {
+                title.innerText = "Thêm Khách hàng mới";
+                l1.innerText = "Họ và Tên";
+                l2.innerText = "Số điện thoại";
+                l3.innerText = "Địa chỉ Email";
+            }
+            
+            modal.style.display = 'flex'; 
+        }
+
+        function closeModal() { 
+            document.getElementById('modal').style.display = 'none'; 
+            document.getElementById('entry-form').reset();
+        }
 
         loadData();
     </script>
