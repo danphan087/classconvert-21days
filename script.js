@@ -264,13 +264,14 @@ async function handleSuccessfulPayment() {
         }
 
         let customerData = { name: customerName, phone: customerPhone };
-        if (customerEmail) customerData.email = customerEmail;
         
-        // 2. Thêm vào bảng customers
+        // 2. Thêm vào bảng customers (Không thêm cột email vào DB vì người dùng có thể chưa tạo cột, gây lỗi sập luồng)
         const { data: customer, error: cError } = await _supabase
             .from('customers')
             .insert([customerData])
             .select();
+        
+        if (cError) console.error("Lỗi thêm Khách hàng (Supabase):", cError);
 
         if (customer) {
             // 3. Tạo đơn hàng (Sản phẩm ID 1 mặc định)
