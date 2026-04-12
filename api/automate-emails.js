@@ -3,7 +3,7 @@ import path from 'path';
 
 const emails = {
     welcome: {
-        subject: "Chào mừng bạn đến với thế giới 'Tuyển sinh Không người lái' 🚀",
+        subject: "1. Chào mừng bạn đến với thế giới 'Tuyển sinh Không người lái' 🚀",
         html: `
             <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
                 <h2>Chào bạn,</h2>
@@ -16,7 +16,7 @@ const emails = {
         `
     },
     nurture: {
-        subject: "Đừng để website của bạn chỉ là một 'tờ rơi điện tử' 📄",
+        subject: "2. Đừng để website của bạn chỉ là một 'tờ rơi điện tử' 📄",
         html: `
             <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
                 <h2>Chào bạn,</h2>
@@ -35,7 +35,7 @@ const emails = {
         `
     },
     sales: {
-        subject: "5.000đ để sở hữu 'Cỗ máy Tuyển sinh' – Bạn có sẵn sàng? 💎",
+        subject: "3. 5.000đ để sở hữu 'Cỗ máy Tuyển sinh' – Bạn có sẵn sàng? 💎",
         html: `
             <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
                 <h2>Chào bạn,</h2>
@@ -111,20 +111,24 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: resp.ok });
         }
 
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
         if (isTest) {
             console.log("Kích hoạt chế độ TEST cho:", recipientEmail);
-            const r1 = await sendEmail(emails.welcome);
-            const r2 = await sendEmail(emails.nurture);
-            const r3 = await sendEmail(emails.sales);
-            return res.status(200).json({ success: true, mode: 'test', results: [r1.status, r2.status, r3.status] });
+            await sendEmail(emails.welcome);
+            await sleep(1000);
+            await sendEmail(emails.nurture);
+            await sleep(1000);
+            await sendEmail(emails.sales);
+            return res.status(200).json({ success: true, mode: 'test' });
         } else {
             console.log("Kích hoạt phễu 3 thư (THỰC TẾ) cho:", email);
-            // Trong thực tế, các email 2, 3 sẽ được delay/lên lịch. 
-            // Tuy nhiên để đáp ứng bài test SOP, tôi tạm cho gửi toàn bộ chuỗi 3 email ngay lập tức.
-            const r1 = await sendEmail(emails.welcome);
-            const r2 = await sendEmail(emails.nurture);
-            const r3 = await sendEmail(emails.sales);
-            return res.status(200).json({ success: true, mode: 'production', results: [r1.status, r2.status, r3.status] });
+            await sendEmail(emails.welcome);
+            await sleep(1000);
+            await sendEmail(emails.nurture);
+            await sleep(1000);
+            await sendEmail(emails.sales);
+            return res.status(200).json({ success: true, mode: 'production' });
         }
     } catch (error) {
         console.error("Lỗi Automation:", error);
