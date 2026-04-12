@@ -286,16 +286,21 @@ async function handleSuccessfulPayment() {
             if (customerPhone.includes('@') || currentCustomerInfo?.email) {
                 const targetEmail = currentCustomerInfo?.email || customerPhone;
                 console.log("Đang gửi email xác nhận đơn hàng tới:", targetEmail);
-                fetch('/api/automate-emails', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        email: targetEmail, 
-                        type: 'order_confirmation',
-                        productName: '14-Day Checklist: Tuyển sinh Tự động',
-                        amount: '5.000'
-                    })
-                });
+                try {
+                    await fetch('/api/automate-emails', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            email: targetEmail, 
+                            type: 'order_confirmation',
+                            productName: '14-Day Checklist: Tuyển sinh Tự động',
+                            amount: '5.000'
+                        })
+                    });
+                    console.log("Đã kích hoạt gửi API Xác nhận đơn hàng.");
+                } catch(err) {
+                    console.error("Lỗi khi gửi email:", err);
+                }
             }
 
             // 4. Trừ kho sản phẩm 1
@@ -322,6 +327,7 @@ function openWaitlistModal() {
     const modal = document.getElementById('waitlist-modal');
     if (modal) {
         modal.classList.remove('hidden');
+        modal.classList.add('flex');
         setTimeout(() => {
             modal.classList.remove('opacity-0');
             modal.firstElementChild.classList.remove('scale-95');
@@ -334,7 +340,10 @@ function closeWaitlistModal() {
     if (modal) {
         modal.classList.add('opacity-0');
         modal.firstElementChild.classList.add('scale-95');
-        setTimeout(() => modal.classList.add('hidden'), 300);
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 300);
     }
 }
 
