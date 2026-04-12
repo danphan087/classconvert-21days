@@ -62,12 +62,16 @@ export default async function handler(req, res) {
     try {
         const { email } = req.body;
         const isTest = email.includes('+test');
+        
+        // Cắt bỏ phần +test để lách luật khắt khe của Resend Sandbox Mode
+        // (Resend chỉ cho gửi tới đúng email đã đăng ký, thêm +test nó cũng chặn)
+        const recipientEmail = isTest ? email.replace('+test', '') : email;
 
         const configPath = path.join(process.cwd(), 'resend_config.txt');
         const apiKey = fs.readFileSync(configPath, 'utf8').trim();
 
         const sendEmail = async (template) => {
-            return fetch('https://api.resend.com/emails', {
+            const resp = await fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
@@ -75,15 +79,20 @@ export default async function handler(req, res) {
                 },
                 body: JSON.stringify({
                     from: 'ClassConvert <onboarding@resend.dev>',
-                    to: [email],
+                    to: [recipientEmail],
                     subject: template.subject,
                     html: template.html
                 })
             });
+            const data = await resp.json();
+            if (!resp.ok) {
+                console.error("Lỗi từ Resend:", data);
+            }
+            return { status: resp.status, data };
         };
 
         if (isTest) {
-            console.log("Kích hoạt chế độ TEST cho:", email);
+            console.log("Kích hoạt chế độ TEST cho:", recipientEmail);
             const r1 = await sendEmail(emails.welcome);
             const r2 = await sendEmail(emails.nurture);
             const r3 = await sendEmail(emails.sales);
