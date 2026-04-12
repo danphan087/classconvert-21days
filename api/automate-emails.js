@@ -83,7 +83,9 @@ export default async function handler(req, res) {
         const { email, type, productName, amount } = req.body;
         const isTest = email.includes('+test');
         
-        const recipientEmail = (isTest || email === 'phanlong0807@gmail.com') ? 'phanlong0807@gmail.com' : email;
+        // Sau khi đã xác thực domain, chúng ta gửi trực tiếp tới email khách nhập
+        // Chỉ giữ lại việc chuyển hướng cho riêng email có đuôi +test để tiện kiểm thử.
+        const recipientEmail = isTest ? 'phanlong0807@gmail.com' : email;
 
         const configPath = path.join(process.cwd(), 'resend_config.txt');
         const apiKey = fs.readFileSync(configPath, 'utf8').trim();
@@ -96,7 +98,7 @@ export default async function handler(req, res) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    from: 'ClassConvert <onboarding@resend.dev>',
+                    from: 'Long ClassConvert <thongbao@classconvert.vn>',
                     to: [recipientEmail],
                     subject: templateData.subject,
                     html: typeof templateData.html === 'function' ? templateData.html(productName, amount) : templateData.html

@@ -157,6 +157,7 @@
                     <td class="p-4">${c.phone}</td>
                     <td class="p-4 text-slate-500">${c.email || '---'}</td>
                     <td class="p-4 text-right">
+                        <button onclick="createOrder(${c.id}, '${c.name}', '${c.email || c.phone}')" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-indigo-700 transition-colors mr-2">Tạo đơn</button>
                         <button onclick="deleteItem('customers', ${c.id})" class="text-rose-600 p-2"><span class="material-symbols-outlined">delete</span></button>
                     </td>
                 </tr>
@@ -177,6 +178,40 @@
                 </tr>
             `).join('');
             document.getElementById('orders-list').innerHTML = html;
+        }
+
+        async function createOrder(customerId, customerName, email) {
+            if (confirm(`Bạn muốn tạo đơn hàng 'Checklist 14 ngày (5.000đ)' cho ${customerName}?`)) {
+                // 1. Thêm vào bảng orders
+                const { error } = await _supabase.from('orders').insert([{
+                    customer_id: customerId,
+                    product_id: 1,
+                    amount: 5000,
+                    status: 'completed'
+                }]);
+
+                if (!error) {
+                    alert('Đã tạo đơn hàng thành công!');
+                    
+                    // 2. Kích hoạt Email Xác nhận (Nếu có email)
+                    if (email && email.includes('@')) {
+                        console.log("Admin đang gửi thư xác nhận cho:", email);
+                        fetch('/api/automate-emails', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                email: email, 
+                                type: 'order_confirmation',
+                                productName: '14-Day Checklist: Tuyển sinh Tự động',
+                                amount: '5.000'
+                            })
+                        });
+                    }
+                    loadData();
+                } else {
+                    alert('Lỗi: ' + error.message);
+                }
+            }
         }
 
         async function deleteItem(table, id) {
