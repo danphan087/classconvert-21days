@@ -53,6 +53,26 @@ const emails = {
                 <p>-- Long ClassConvert</p>
             </div>
         `
+    },
+    order_success: {
+        subject: "Xác nhận đơn hàng thành công: Tuyển sinh Tự động 💎",
+        html: (productName, amount) => `
+            <div style="font-family: sans-serif; line-height: 1.6; color: #333; border: 1px solid #eee; padding: 20px; border-radius: 12px;">
+                <h2 style="color: #6366F1;">Tuyệt vời! Giao dịch đã hoàn tất.</h2>
+                <p>Chào bạn, Long đây. Hệ thống vừa ghi nhận bạn đã thanh toán thành công cho sản phẩm:</p>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0;"><strong>Sản phẩm:</strong> ${productName}</p>
+                    <p style="margin: 0;"><strong>Số tiền:</strong> ${amount}đ</p>
+                    <p style="margin: 0;"><strong>Trạng thái:</strong> Đã hoàn thành</p>
+                </div>
+                <h3>Hướng dẫn nhận hàng:</h3>
+                <p>Bạn có thể truy cập ngay vào link dưới đây để tải về bộ Checklist 14 ngày:</p>
+                <p><a href="https://alpha.classconvert.vn/ebook" style="padding: 10px 20px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">TẢI NGAY CHECKLIST</a></p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+                <p>Cảm ơn bạn đã tin tưởng ClassConvert. Nếu có bất kỳ khó khăn nào trong quá trình cài đặt, đừng ngần ngại nhắn tin cho Long nhé!</p>
+                <p>Thân mến,<br><strong>Long ClassConvert</strong></p>
+            </div>
+        `
     }
 };
 
@@ -60,18 +80,16 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).end();
 
     try {
-        const { email } = req.body;
+        const { email, type, productName, amount } = req.body;
         const isTest = email.includes('+test');
         
-        // Cắt bỏ phần +test để lách luật khắt khe của Resend Sandbox Mode
-        // (Resend chỉ cho gửi tới đúng email đã đăng ký, thêm +test nó cũng chặn)
-        const recipientEmail = isTest ? email.replace('+test', '') : email;
+        const recipientEmail = (isTest || email === 'phanlong0807@gmail.com') ? 'phanlong0807@gmail.com' : email;
 
         const configPath = path.join(process.cwd(), 'resend_config.txt');
         const apiKey = fs.readFileSync(configPath, 'utf8').trim();
 
-        const sendEmail = async (template) => {
-            const resp = await fetch('https://api.resend.com/emails', {
+        const sendEmail = async (templateData) => {
+            return fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
@@ -80,16 +98,16 @@ export default async function handler(req, res) {
                 body: JSON.stringify({
                     from: 'ClassConvert <onboarding@resend.dev>',
                     to: [recipientEmail],
-                    subject: template.subject,
-                    html: template.html
+                    subject: templateData.subject,
+                    html: typeof templateData.html === 'function' ? templateData.html(productName, amount) : templateData.html
                 })
             });
-            const data = await resp.json();
-            if (!resp.ok) {
-                console.error("Lỗi từ Resend:", data);
-            }
-            return { status: resp.status, data };
         };
+
+        if (type === 'order_confirmation') {
+            const resp = await sendEmail(emails.order_success);
+            return res.status(200).json({ success: resp.ok });
+        }
 
         if (isTest) {
             console.log("Kích hoạt chế độ TEST cho:", recipientEmail);

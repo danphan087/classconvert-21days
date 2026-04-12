@@ -274,6 +274,22 @@ async function handleSuccessfulPayment() {
                 status: 'completed'
             }]);
             
+            // Gửi Email xác nhận đơn hàng (Automation)
+            if (customerPhone.includes('@') || currentCustomerInfo?.email) {
+                const targetEmail = currentCustomerInfo?.email || customerPhone;
+                console.log("Đang gửi email xác nhận đơn hàng tới:", targetEmail);
+                fetch('/api/automate-emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: targetEmail, 
+                        type: 'order_confirmation',
+                        productName: '14-Day Checklist: Tuyển sinh Tự động',
+                        amount: '5.000'
+                    })
+                });
+            }
+
             // 4. Trừ kho sản phẩm 1
             const { data: product } = await _supabase.from('products').select('stock_quantity').eq('id', 1).single();
             if (product) {
