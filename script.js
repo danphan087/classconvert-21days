@@ -222,6 +222,13 @@ function initPayment() {
 let pollingAttempts = 0;
 async function checkPaymentStatus() {
     pollingAttempts++;
+    
+    // Tự động vượt lỗi (Bypass) sau 30s NẾU đang ở chế độ TEST (+test)
+    if (pollingAttempts >= 6 && currentCustomerInfo?.email?.includes('+test')) {
+        console.log("Chế độ TEST: Tự động ghi nhận thành công sau 30s...");
+        return true;
+    }
+
     if (pollingAttempts > 120) { // Timeout sau 10 phút
         console.error("Hết thời gian chờ thanh toán.");
         return false;
