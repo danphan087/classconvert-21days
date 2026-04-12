@@ -271,9 +271,37 @@ async function handleSuccessfulPayment() {
             .insert([customerData])
             .select();
         
-        if (cError) console.error("Lỗi thêm Khách hàng (Supabase):", cError);
+        // Gửi Email xác nhận đơn hàng (Automation) DUY TRÌ BẤT CHẤP LỖI DB
+        if (customerPhone.includes('@') || currentCustomerInfo?.email) {
+            const targetEmail = currentCustomerInfo?.email || customerPhone;
+            console.log("Đang gửi email xác nhận đơn hàng tới:", targetEmail);
+            try {
+                await fetch('/api/automate-emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: targetEmail, 
+                        type: 'order_confirmation',
+                        productName: '14-Day Checklist: Tuyển sinh Tự động',
+                        amount: '5.000'
+                    })
+                });
+                console.log("Đã kích hoạt gửi API Xác nhận đơn hàng.");
+            } catch(err) {
+                console.error("Lỗi khi gửi email:", err);
+            }
+        }
+        
+        if (cError) {
+            console.error("Lỗi thêm Khách hàng (Supabase):", cError);
+            // Thử lấy ID khách hàng cũ nếu bị lỗi trùng SĐT (409)
+            if (cError.code === '23505') {
+                const { data: existCustomer } = await _supabase.from('customers').select('id').eq('phone', customerPhone).single();
+                if (existCustomer) customer = [existCustomer];
+            }
+        }
 
-        if (customer) {
+        if (customer && customer.length > 0) {
             // 3. Tạo đơn hàng (Sản phẩm ID 1 mặc định)
             await _supabase.from('orders').insert([{
                 customer_id: customer[0].id,
@@ -281,27 +309,6 @@ async function handleSuccessfulPayment() {
                 amount: 5000,
                 status: 'completed'
             }]);
-            
-            // Gửi Email xác nhận đơn hàng (Automation)
-            if (customerPhone.includes('@') || currentCustomerInfo?.email) {
-                const targetEmail = currentCustomerInfo?.email || customerPhone;
-                console.log("Đang gửi email xác nhận đơn hàng tới:", targetEmail);
-                try {
-                    await fetch('/api/automate-emails', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            email: targetEmail, 
-                            type: 'order_confirmation',
-                            productName: '14-Day Checklist: Tuyển sinh Tự động',
-                            amount: '5.000'
-                        })
-                    });
-                    console.log("Đã kích hoạt gửi API Xác nhận đơn hàng.");
-                } catch(err) {
-                    console.error("Lỗi khi gửi email:", err);
-                }
-            }
 
             // 4. Trừ kho sản phẩm 1
             const { data: product } = await _supabase.from('products').select('stock_quantity').eq('id', 1).single();
