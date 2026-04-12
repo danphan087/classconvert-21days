@@ -237,13 +237,21 @@
             const f2 = document.getElementById('field2').value;
             const f3 = document.getElementById('field3').value;
 
+            let err = null;
             if (currentTab === 'products') {
-                await _supabase.from('products').insert([{ name: f1, price: f2, stock_quantity: f3 }]);
+                const { error } = await _supabase.from('products').insert([{ name: f1, price: f2, stock_quantity: f3 }]);
+                err = error;
             } else if (currentTab === 'customers') {
-                await _supabase.from('customers').insert([{ name: f1, phone: f2, email: f3 }]);
+                const { error } = await _supabase.from('customers').insert([{ name: f1, phone: f2, email: f3 }]);
+                err = error;
             }
-            closeModal();
-            loadData();
+            
+            if (err) {
+                alert("Lỗi ❌: " + err.message + "\n(Nếu thêm khách hàng, hãy đảm bảo Số điện thoại chưa từng tồn tại trong hệ thống)");
+            } else {
+                closeModal();
+                loadData();
+            }
         };
 
         function switchTab(tabId) {

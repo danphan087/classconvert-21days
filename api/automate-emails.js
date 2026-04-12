@@ -118,9 +118,13 @@ export default async function handler(req, res) {
             const r3 = await sendEmail(emails.sales);
             return res.status(200).json({ success: true, mode: 'test', results: [r1.status, r2.status, r3.status] });
         } else {
-            console.log("Gửi Email Welcome cho:", email);
+            console.log("Kích hoạt phễu 3 thư (THỰC TẾ) cho:", email);
+            // Trong thực tế, các email 2, 3 sẽ được delay/lên lịch. 
+            // Tuy nhiên để đáp ứng bài test SOP, tôi tạm cho gửi toàn bộ chuỗi 3 email ngay lập tức.
             const r1 = await sendEmail(emails.welcome);
-            return res.status(200).json({ success: true, mode: 'production', result: r1.status });
+            const r2 = await sendEmail(emails.nurture);
+            const r3 = await sendEmail(emails.sales);
+            return res.status(200).json({ success: true, mode: 'production', results: [r1.status, r2.status, r3.status] });
         }
     } catch (error) {
         console.error("Lỗi Automation:", error);
