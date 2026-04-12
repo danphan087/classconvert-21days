@@ -1166,14 +1166,10 @@
                         Bản đồ xây dựng "cỗ máy" thu hút và chốt học học viên tiềm năng. Tài liệu thực chiến dành riêng cho thầy cô không rành kỹ thuật.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center gap-6">
-                        <div class="text-white">
-                            <span class="text-slate-400 line-through text-sm">299.000đ</span>
-                            <div class="text-3xl font-black">5.000đ</div>
-                        </div>
-                        <a href="/thanhtoan" class="w-full sm:w-auto px-10 py-5 bg-[#6366F1] text-white rounded-full font-extrabold shadow-2xl shadow-indigo-500/40 hover:scale-105 transition-all flex items-center justify-center gap-3 group">
-                            SỞ HỮU NGAY
+                        <button onclick="openWaitlistModal()" class="w-full sm:w-auto px-10 py-5 bg-[#6366F1] text-white rounded-full font-extrabold shadow-2xl shadow-indigo-500/40 hover:scale-105 transition-all flex items-center justify-center gap-3 group">
+                            THAM GIA DANH SÁCH CHỜ
                             <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
                 <!-- Ebook Preview (CSS-based) -->
@@ -1190,6 +1186,49 @@
         </section>
 
     </main>
+
+    <!-- Waitlist Modal -->
+    <div id="waitlist-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-[9999] backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 relative">
+            <button onclick="closeWaitlistModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <div id="waitlist-form-ui">
+                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <span class="material-symbols-outlined text-4xl">notifications_active</span>
+                </div>
+                <h3 class="text-2xl font-black text-center mb-2 text-slate-900">Nhận Thông Báo</h3>
+                <p class="text-slate-500 text-center mb-6 text-sm">Điền thông tin để là người đầu tiên sở hữu Checklist khi ra mắt rực rỡ nhé.</p>
+                <form id="waitlist-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Họ và Tên *</label>
+                        <input type="text" id="wl-name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Số điện thoại *</label>
+                        <input type="tel" id="wl-phone" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Email *</label>
+                        <input type="email" id="wl-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 outline-none" placeholder="Để nhận email cập nhật">
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-[#6366F1] text-white rounded-xl font-bold hover:bg-indigo-600 transition-all shadow-lg flex items-center justify-center gap-2">
+                        ĐĂNG KÝ NGAY <span class="material-symbols-outlined">send</span>
+                    </button>
+                </form>
+            </div>
+            
+            <div id="waitlist-success-ui" class="hidden text-center py-6">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <span class="material-symbols-outlined text-5xl">check_circle</span>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-2">Đăng ký thành công!</h3>
+                <p class="text-slate-600 mb-6">Bạn đã được thêm vào danh sách chờ VIP. Hãy kiểm tra hộp thư Email ngay bây giờ nhé.</p>
+                <button onclick="closeWaitlistModal()" class="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all">Đóng</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Chatbot Widget -->
     <div id="chatbot-widget" class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end">
@@ -1247,6 +1286,6 @@
         </button>
     </div>
 
-    <script src="script.js?v=bypass_cache_7"></script>
+    <script src="script.js?v=bypass_cache_wl"></script>
 </body>
 </html>

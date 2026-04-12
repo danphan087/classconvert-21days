@@ -317,7 +317,64 @@ function showPaymentSuccess() {
 let currentCustomerInfo = null;
 let paymentCheckInterval = null;
 
+// ================= WAITLIST LOGIC =================
+function openWaitlistModal() {
+    const modal = document.getElementById('waitlist-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            modal.firstElementChild.classList.remove('scale-95');
+        }, 10);
+    }
+}
+
+function closeWaitlistModal() {
+    const modal = document.getElementById('waitlist-modal');
+    if (modal) {
+        modal.classList.add('opacity-0');
+        modal.firstElementChild.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Xử lý Form Danh sách chờ (Trang chủ)
+    const waitlistForm = document.getElementById('waitlist-form');
+    if (waitlistForm) {
+        waitlistForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('wl-email').value;
+            const name = document.getElementById('wl-name').value;
+            const phone = document.getElementById('wl-phone').value;
+
+            // Optional: Save to Supabase (bảng customers)
+            if (typeof _supabase !== 'undefined') {
+                await _supabase.from('customers').insert([{ name, phone }]);
+            }
+
+            // Gửi chuỗi email automation
+            try {
+                const r = await fetch('/api/automate-emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await r.json();
+                if (data.mode === 'test') {
+                    console.log("TEST MODE activated via Waitlist");
+                }
+            } catch (err) {
+                console.error("Lỗi gửi email waitlist:", err);
+            }
+
+            // Hiển thị UI thành công
+            document.getElementById('waitlist-form-ui').classList.add('hidden');
+            document.getElementById('waitlist-success-ui').classList.remove('hidden');
+        });
+    }
+
+    // Xử lý Form Checkout (Trang Thanh Toán)
     const checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', (e) => {
@@ -328,20 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 phone: document.getElementById('customer-phone').value,
                 email: document.getElementById('customer-email').value
             };
-
-            // Gửi email tự động (Automation)
-            if (currentCustomerInfo.email) {
-                console.log("Đang kích hoạt chuỗi Email Automation...");
-                fetch('/api/automate-emails', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: currentCustomerInfo.email })
-                }).then(r => r.json()).then(data => {
-                    if (data.mode === 'test') {
-                        alert("Chế độ TEST đã kích hoạt! Hãy kiểm tra hòm thư để nhận ngay 3 email chào mừng, nuôi dưỡng và chốt đơn.");
-                    }
-                });
-            }
 
             document.getElementById('customer-form-ui').classList.add('hidden');
             document.getElementById('payment-ui').classList.remove('hidden');
