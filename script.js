@@ -305,6 +305,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 email: document.getElementById('customer-email').value
             };
 
+            // Gửi email tự động (Automation)
+            if (currentCustomerInfo.email) {
+                console.log("Đang kích hoạt chuỗi Email Automation...");
+                fetch('/api/automate-emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentCustomerInfo.email })
+                }).then(r => r.json()).then(data => {
+                    if (data.mode === 'test') {
+                        alert("Chế độ TEST đã kích hoạt! Hãy kiểm tra hòm thư để nhận ngay 3 email chào mừng, nuôi dưỡng và chốt đơn.");
+                    }
+                });
+            }
+
             document.getElementById('customer-form-ui').classList.add('hidden');
             document.getElementById('payment-ui').classList.remove('hidden');
             
