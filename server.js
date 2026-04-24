@@ -74,5 +74,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(\`✅ ClassConvert server đang chạy tại http://localhost:\${PORT}\`);
+    console.log(`✅ ClassConvert server đang chạy tại http://localhost:${PORT}`);
 });
