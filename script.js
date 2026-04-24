@@ -162,7 +162,52 @@ function handleUserInput() {
 }
 
 // Support Enter key
+// ==========================================
+// 1. TẢI CẤU HÌNH ĐỘNG TỪ SUPABASE (MCP)
+// ==========================================
+async function loadSiteSettings() {
+    if (!window.supabase) return;
+    
+    try {
+        const { data, error } = await window.supabase.from('site_settings').select('key, value');
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            data.forEach(setting => {
+                // Cập nhật Tiêu đề Landing Page
+                if (setting.key === 'hero_title') {
+                    const heroEl = document.getElementById('hero-title');
+                    if (heroEl) {
+                        // Giữ lại cấu trúc HTML nếu cần, hoặc thay toàn bộ
+                        heroEl.innerHTML = setting.value;
+                    }
+                }
+                // Cập nhật Giá bán trang thanh toán
+                if (setting.key === 'price') {
+                    const priceOld = document.getElementById('product-price-old');
+                    const priceCurrent = document.getElementById('product-price-current');
+                    if (priceCurrent) {
+                        // Format giá tiền (thêm dấu . và chữ đ)
+                        const formattedPrice = parseInt(setting.value).toLocaleString('vi-VN') + 'đ';
+                        priceCurrent.textContent = formattedPrice;
+                        
+                        // Cập nhật luôn biến cấu hình SEPAY để QR code tạo đúng giá
+                        if (typeof SEPAY_CONFIG !== 'undefined') {
+                            SEPAY_CONFIG.amount = parseInt(setting.value);
+                        }
+                    }
+                }
+            });
+        }
+    } catch (err) {
+        console.error("Lỗi tải cấu hình động:", err);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Gọi hàm load settings ngay khi trang vừa tải xong
+    loadSiteSettings();
+
     const input = document.getElementById('chat-input');
     if (input) {
         input.addEventListener('keypress', (e) => {
