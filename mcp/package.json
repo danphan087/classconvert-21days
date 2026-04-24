@@ -1,0 +1,17 @@
+{
+  "name": "classconvert-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for ClassConvert",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "express": "^4.21.0",
+    "sqlite3": "^5.1.7",
+    "sqlite": "^5.1.1",
+    "dotenv": "^16.4.5"
+  }
+}
