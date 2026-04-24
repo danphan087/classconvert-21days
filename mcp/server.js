@@ -164,10 +164,13 @@ server.tool(
     }
 );
 
+import cors from 'cors';
+
 // ==========================================
 // Thiết lập Express & SSE Transport
 // ==========================================
 const app = express();
+app.use(cors());
 const PORT = 3001;
 
 let transport;
