@@ -188,8 +188,8 @@ const SUPABASE_KEY = "sb_publishable_ThnqQjrR_ch32dsVyqlBwQ_WQmwv46q";
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // SePay Payment Automation Logic
+// apiKey đã được chuyển sang server-side (process.env.SEPAY_API_KEY trong check-payment.js)
 const SEPAY_CONFIG = {
-    apiKey: "0NMPWQXMRSLJATN8VYT1E6FDCYELRT72D5SOJZSXQLE69LKCP3JKBMQIHURIH9UW",
     accountNumber: "29947747",
     bank: "ACB",
     amount: 5000
@@ -229,7 +229,7 @@ async function checkPaymentStatus() {
     }
 
     try {
-        const url = `/api/check-payment?accountNumber=${SEPAY_CONFIG.accountNumber}&apiKey=${SEPAY_CONFIG.apiKey}&paymentMessage=${paymentMessage}`;
+        const url = `/api/check-payment?accountNumber=${SEPAY_CONFIG.accountNumber}&paymentMessage=${paymentMessage}`;
         const response = await fetch(url);
         
         const data = await response.json();

@@ -1,0 +1,5 @@
+.env
+resend_config.txt
+brain.db
+node_modules/
+dist/

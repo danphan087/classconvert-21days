@@ -1,0 +1,14 @@
+Nếu bạn đã thấy demo hệ thống của mình ở bài trước — đây là lúc để bắt đầu.
+
+Mình đang mở danh sách chờ cho bộ 14-Day Checklist: Xây dựng Hệ thống Tuyển sinh Tự động.
+
+Đây không phải khóa học lý thuyết. Đây là lộ trình 14 ngày để bạn tự tay build ra một hệ thống như mình đang demo — landing page, QR thanh toán tự động, email chăm sóc khách hàng — từ con số 0, không cần biết lập trình.
+
+Bạn phù hợp nếu:
+— Đang mở lớp dạy online và vẫn phải tư vấn, gửi link, xác nhận chuyển khoản thủ công
+— Muốn hệ thống tự chạy kể cả khi bạn không online
+— Sẵn sàng bỏ ra 14 ngày để không phải làm tay mãi
+
+👉 Đăng ký danh sách chờ tại: https://alpha.classconvert.vn/
+
+Khi vào danh sách, bạn sẽ nhận ngay chuỗi email chia sẻ từng bước mình đang làm — trước khi tài liệu chính thức mở bán.

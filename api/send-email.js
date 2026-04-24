@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -9,9 +6,8 @@ export default async function handler(req, res) {
     try {
         const { to, subject, html } = req.body;
 
-        // Đọc API Key từ file config
-        const configPath = path.join(process.cwd(), 'resend_config.txt');
-        const apiKey = fs.readFileSync(configPath, 'utf8').trim();
+        const apiKey = process.env.RESEND_API_KEY;
+        if (!apiKey) return res.status(500).json({ error: 'RESEND_API_KEY chưa được cấu hình trong .env' });
 
         if (!to || !subject || !html) {
             return res.status(400).json({ error: 'Missing required fields' });

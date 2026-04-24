@@ -4,6 +4,16 @@
   "description": "Hệ thống tự động ClassConvert",
   "type": "module",
   "engines": {
-    "node": "24.x"
+    "node": ">=18.x"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "build": "node build.cjs"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
   }
 }

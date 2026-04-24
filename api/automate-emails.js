@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 
 const emails = {
     welcome: {
@@ -87,8 +85,8 @@ export default async function handler(req, res) {
         // Chỉ giữ lại việc chuyển hướng cho riêng email có đuôi +test để tiện kiểm thử.
         const recipientEmail = isTest ? 'phanlong0807@gmail.com' : email;
 
-        const configPath = path.join(process.cwd(), 'resend_config.txt');
-        const apiKey = fs.readFileSync(configPath, 'utf8').trim();
+        const apiKey = process.env.RESEND_API_KEY;
+        if (!apiKey) throw new Error('RESEND_API_KEY chưa được cấu hình trong .env');
 
         const sendEmail = async (templateData) => {
             return fetch('https://api.resend.com/emails', {
