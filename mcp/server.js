@@ -174,7 +174,7 @@ let transport;
 
 app.get("/sse", async (req, res) => {
     console.log("[HTTP] Kết nối SSE mới được thiết lập");
-    transport = new SSEServerTransport("/message", res);
+    transport = new SSEServerTransport("/mcp-api/message", res);
     await server.connect(transport);
 });
 
