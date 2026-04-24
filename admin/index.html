@@ -124,14 +124,22 @@
         </div>
     </div>
 
+    <!-- Cấu hình ứng dụng -->
+    <script src="/config.js"></script>
     <script>
-        const SUPABASE_URL = "https://rypaiacnnorwxjaywhcd.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_ThnqQjrR_ch32dsVyqlBwQ_WQmwv46q";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = window.APP_CONFIG?.SUPABASE_URL || "";
+        const SUPABASE_KEY = window.APP_CONFIG?.SUPABASE_KEY || "";
+        let _supabase = null;
+        if (SUPABASE_URL && SUPABASE_KEY) {
+            _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } else {
+            console.error("Thiếu cấu hình Supabase!");
+        }
 
         let currentTab = 'products';
 
         async function loadData() {
+            if (!_supabase) return;
             if (currentTab === 'products') {
                 const { data } = await _supabase.from('products').select('*').order('id', { ascending: true });
                 renderProducts(data);

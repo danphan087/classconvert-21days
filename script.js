@@ -182,15 +182,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Supabase Configuration
-const SUPABASE_URL = "https://rypaiacnnorwxjaywhcd.supabase.co";
-const SUPABASE_KEY = "sb_publishable_ThnqQjrR_ch32dsVyqlBwQ_WQmwv46q";
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Supabase Configuration from environment (injected via server config.js)
+const SUPABASE_URL = window.APP_CONFIG?.SUPABASE_URL || "";
+const SUPABASE_KEY = window.APP_CONFIG?.SUPABASE_KEY || "";
+let _supabase = null;
+if (SUPABASE_URL && SUPABASE_KEY) {
+    _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+} else {
+    console.warn("Supabase credentials not found in APP_CONFIG");
+}
 
 // SePay Payment Automation Logic
 // apiKey đã được chuyển sang server-side (process.env.SEPAY_API_KEY trong check-payment.js)
 const SEPAY_CONFIG = {
-    accountNumber: "29947747",
+    accountNumber: window.APP_CONFIG?.SEPAY_ACCOUNT_NUMBER || "29947747", // Fallback to old if not set
     bank: "ACB",
     amount: 5000
 };
