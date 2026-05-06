@@ -5,6 +5,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -54,6 +56,40 @@ app.post('/api/send-email', async (req, res) => {
     return sendEmail(req, res);
 });
 
+// Route lưu lead từ form waitlist vào brain.db
+app.post('/api/save-lead', async (req, res) => {
+    const { name, phone, email } = req.body;
+    if (!name && !phone && !email) {
+        return res.status(400).json({ error: 'Thiếu thông tin lead' });
+    }
+    try {
+        const db = await open({
+            filename: path.join(__dirname, 'brain.db'),
+            driver: sqlite3.Database
+        });
+        await db.exec(`
+            CREATE TABLE IF NOT EXISTS customers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT, phone TEXT, email TEXT,
+                is_notified INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        // Đảm bảo cột is_notified tồn tại
+        try { await db.exec("ALTER TABLE customers ADD COLUMN is_notified INTEGER DEFAULT 0"); } catch(e) {}
+        await db.run(
+            'INSERT INTO customers (name, phone, email, is_notified) VALUES (?, ?, ?, 0)',
+            [name || null, phone || null, email || null]
+        );
+        await db.close();
+        console.log(`[save-lead] Đã lưu lead: ${name} - ${phone} - ${email}`);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('[save-lead] Lỗi:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Serve main static pages correctly without extension
 const pages = [
     { route: '/', file: 'index.html' },
@@ -61,22 +97,6 @@ const pages = [
     { route: '/ebook', file: 'ebook/index.html' },
     { route: '/admin', file: 'admin/index.html' }
 ];
-
-// Endpoint tải sản phẩm số sau khi thanh toán
-app.get('/api/download-ebook', (req, res) => {
-    // Lưu ý: Trong thực tế thầy cô cần thêm logic kiểm tra token/trạng thái thanh toán ở đây
-    const filePath = path.join(__dirname, '60-phut-tao-landing-page.html');
-    
-    // res.download sẽ set headers Content-Disposition thành 'attachment' để bắt buộc tải về
-    res.download(filePath, '60-phut-tao-landing-page.html', (err) => {
-        if (err) {
-            console.error("Lỗi tải file:", err);
-            if (!res.headersSent) {
-                res.status(500).send("Lỗi server, không thể tải file.");
-            }
-        }
-    });
-});
 
 pages.forEach(page => {
     app.get(page.route, (req, res) => {
@@ -91,4 +111,5 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
     console.log(`✅ ClassConvert server đang chạy tại http://localhost:${PORT}`);
+
 });

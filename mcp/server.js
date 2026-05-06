@@ -33,39 +33,41 @@ function createServer() {
     });
 
     // ==========================================
-    // 1. get_leads_report (Xem ai mới điền form)
+    // 1. get_leads_report_now (Xem danh sách khách hàng)
     // ==========================================
     server.tool(
-        "get_leads_report",
+        "get_leads_report_now",
         "Xem danh sách khách hàng mới nhất (waitlist/mua hàng) từ database",
-        { limit: z.number().default(5).describe("Số lượng khách hàng cần xem") },
-        async ({ limit }) => {
-            console.log(`[MCP Call] get_leads_report (limit: ${limit})`);
+        { limit: z.number().optional().describe("Số lượng khách hàng cần xem (mặc định 20)") },
+        async ({ limit = 20 }) => {
+            console.log(`[MCP Call] get_leads_report_now (limit: ${limit})`);
+            let db;
             try {
-                const db = await getDb();
-                await db.exec(`
-                    CREATE TABLE IF NOT EXISTS customers (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        name TEXT,
-                        phone TEXT,
-                        email TEXT,
-                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                    )
-                `);
-                const leads = await db.all('SELECT * FROM customers ORDER BY id DESC LIMIT ?', [limit]);
-                await db.close();
-                
+                db = await getDb();
+                const leads = await db.all(
+                    "SELECT id, name, phone, email, created_at FROM customers ORDER BY created_at DESC LIMIT ?",
+                    limit
+                );
+
+                if (!leads || leads.length === 0) {
+                    return { content: [{ type: "text", text: "Chưa có dữ liệu khách hàng nào." }] };
+                }
+
+                const formatted = leads.map(l =>
+                    `- [${l.created_at}] ${l.name} - ${l.phone || ""}` + (l.email ? ` - ${l.email}` : "")
+                ).join("\n");
+
                 return {
-                    content: [{ 
-                        type: "text", 
-                        text: leads.length > 0 
-                            ? `Danh sách ${leads.length} khách mới nhất:\n` + JSON.stringify(leads, null, 2)
-                            : "Chưa có khách hàng nào trong database."
+                    content: [{
+                        type: "text",
+                        text: `Danh sách ${leads.length} khách hàng mới nhất:\n${formatted}`
                     }]
                 };
             } catch (error) {
-                console.error("Error in get_leads_report:", error);
+                console.error("Error in get_leads_report_now:", error);
                 return { content: [{ type: "text", text: `[LỖI] Không thể lấy báo cáo: ${error.message}` }], isError: true };
+            } finally {
+                if (db) await db.close();
             }
         }
     );
@@ -133,14 +135,15 @@ function createServer() {
     // ==========================================
     server.tool(
         "update_site_content",
-        "Cập nhật nội dung động của Landing Page (Tiêu đề hoặc Giá bán) vào database",
+        "Cập nhật nội dung Landing Page (Tiêu đề hero hoặc Giá bán). Khi cập nhật hero_title sẽ thay đổi trực tiếp trên website ngay lập tức.",
         {
             type: z.enum(["hero_title", "price"]).describe("Loại nội dung cần cập nhật"),
-            new_value: z.string().describe("Giá trị nội dung mới")
+            new_value: z.string().describe("Giá trị nội dung mới (plain text)")
         },
         async ({ type, new_value }) => {
             console.log(`[MCP Call] update_site_content (type: ${type}, new_value: ${new_value})`);
             try {
+                // Bước 1: Lưu vào database
                 const db = await getDb();
                 await db.exec(`
                     CREATE TABLE IF NOT EXISTS site_settings (
@@ -149,7 +152,6 @@ function createServer() {
                         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
                     )
                 `);
-                
                 await db.run(
                     `INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) 
                      ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=CURRENT_TIMESTAMP`,
@@ -157,12 +159,74 @@ function createServer() {
                 );
                 await db.close();
 
+                // Bước 2: Ghi thẳng vào index.html (nếu là hero_title)
+                if (type === 'hero_title') {
+                    const { readFile, writeFile } = await import('fs/promises');
+                    const htmlPath = path.join(__dirname, '../index.html');
+                    let html = await readFile(htmlPath, 'utf8');
+
+                    // Thay toàn bộ nội dung bên trong <h1 id="hero-title"...>...</h1>
+                    const h1Regex = /(<h1[^>]*id="hero-title"[^>]*>)([\s\S]*?)(<\/h1>)/;
+                    if (!h1Regex.test(html)) {
+                        throw new Error('Không tìm thấy thẻ <h1 id="hero-title"> trong index.html');
+                    }
+                    html = html.replace(h1Regex, `$1\n                    ${new_value}\n                $3`);
+                    await writeFile(htmlPath, html, 'utf8');
+                    console.log(`[MCP] Đã ghi hero_title vào index.html thành công`);
+                }
+
                 return {
-                    content: [{ type: "text", text: `[THÀNH CÔNG] Đã cập nhật ${type} thành: "${new_value}".` }]
+                    content: [{ type: "text", text: `[THÀNH CÔNG] Đã cập nhật ${type} thành: "${new_value}". Khách hàng refresh website là thấy ngay!` }]
                 };
             } catch (error) {
                 console.error("Error in update_site_content:", error);
                 return { content: [{ type: "text", text: `[LỖI] Cập nhật website thất bại: ${error.message}` }], isError: true };
+            }
+        }
+    );
+
+    // ==========================================
+    // 6. check_new_leads_now (Dùng cho Cron Job báo tin nhắn mới)
+    // ==========================================
+    server.tool(
+        "check_new_leads_now",
+        "Kiểm tra các tín hiệu kinh doanh mới (leads/đăng ký) chưa được thông báo.",
+        {},
+        async () => {
+            console.log(`[MCP Call] check_new_leads_now`);
+            try {
+                const db = await getDb();
+                
+                // 1. Lấy danh sách leads chưa notified
+                const newLeads = await db.all(
+                    "SELECT * FROM customers WHERE is_notified = 0 ORDER BY id ASC"
+                );
+
+                if (newLeads.length === 0) {
+                    await db.close();
+                    return { content: [{ type: "text", text: "Không có tín hiệu mới nào." }] };
+                }
+
+                // 2. Đánh dấu đã notified
+                const ids = newLeads.map(l => l.id);
+                await db.run(
+                    `UPDATE customers SET is_notified = 1 WHERE id IN (${ids.map(() => '?').join(',')})`,
+                    ids
+                );
+                
+                await db.close();
+
+                // 3. Trả về thông tin cho Agent
+                const report = newLeads.map(l => `- ${l.name} (${l.phone || l.email})`).join('\n');
+                return {
+                    content: [{ 
+                        type: "text", 
+                        text: `[TÍN HIỆU MỚI] Có ${newLeads.length} khách hàng vừa đăng ký:\n${report}\n\nHãy thông báo ngay cho chủ sở hữu!` 
+                    }]
+                };
+            } catch (error) {
+                console.error("Error in check_for_notifications:", error);
+                return { content: [{ type: "text", text: `[LỖI] Kiểm tra tín hiệu thất bại: ${error.message}` }], isError: true };
             }
         }
     );
